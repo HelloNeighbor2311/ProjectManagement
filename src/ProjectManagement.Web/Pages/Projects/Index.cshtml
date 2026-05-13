@@ -1,7 +1,10 @@
 ﻿@page
 @using ProjectManagement.Localization
+@using ProjectManagement.Permissions
+@using Microsoft.AspNetCore.Authorization
 @using ProjectManagement.Web.Pages.Projects
 @using Microsoft.Extensions.Localization
+@inject IAuthorizationService AuthorizationService
 @model IndexModel
 @inject IStringLocalizer<ProjectManagementResource> L
 @section scripts
@@ -10,7 +13,18 @@
 }
 <abp-card>
     <abp-card-header>
-        <h2>@L["Projects"]</h2>
+        <abp-column size-md="_6">
+            <abp-card-title>@L["Projects"]</abp-card-title>
+        </abp-column>
+        <abp-column size-md="_11" class="text-end">
+             @if (await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Projects.Create))
+                {
+            <abp-button id="NewProjectButton"
+                        text="@L["NewProject"].Value"
+                        icon="plus"
+                        button-type="Primary" />
+                }
+        </abp-column>
     </abp-card-header>
     <abp-card-body>
         <abp-table striped-rows="true" id="ProjectTable"></abp-table>

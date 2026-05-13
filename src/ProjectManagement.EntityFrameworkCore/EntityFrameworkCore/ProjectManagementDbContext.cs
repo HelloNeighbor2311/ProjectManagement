@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Board;
 using ProjectManagement.Projects;
+using ProjectManagement.TeamMembers;
 using ProjectManagement.WorkTask;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -31,6 +32,7 @@ public class ProjectManagementDbContext :
     //public DbSet<Tasks> Tasks { get; set; }
     //public DbSet<Boards> Boards { get; set; }
     public DbSet<Project> Projects { get; set; }
+    public DbSet<TeamMember> TeamMembers { get; set; }
     #region Entities from the modules
 
     /* Notice: We only implemented IIdentityDbContext and ITenantManagementDbContext
@@ -109,6 +111,15 @@ public class ProjectManagementDbContext :
             b.ConfigureByConvention();
             b.Property(x => x.Name).IsRequired().HasMaxLength(128);
             b.Property(x => x.Description).IsRequired();
+        });
+        builder.Entity<TeamMember>(b =>
+        {
+            b.ToTable(ProjectManagementConsts.DbTablePrefix + "TeamMembers", ProjectManagementConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            b.Property(x => x.Email).IsRequired();
+            b.Property(x => x.Role).IsRequired();
+            b.Property(x => x.WeeklyCapacity).IsRequired();
         });
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using ProjectManagement.Localization;
 using ProjectManagement.MultiTenancy;
+using ProjectManagement.Permissions;
+using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Identity.Web.Navigation;
 using Volo.Abp.SettingManagement.Web.Navigation;
 using Volo.Abp.TenantManagement.Web.Navigation;
@@ -55,7 +57,7 @@ public class ProjectManagementMenuContributor : IMenuContributor
                     "Project.Project",
                     l["Menu:Project"],
                     url: "/Projects"
-                )
+                ).RequirePermissions(ProjectManagementPermissions.Projects.Default)
             )
         );
         return Task.CompletedTask;

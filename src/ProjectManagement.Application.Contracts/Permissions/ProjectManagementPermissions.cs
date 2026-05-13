@@ -6,4 +6,23 @@ public static class ProjectManagementPermissions
 
     //Add your own permission names. Example:
     //public const string MyPermission1 = GroupName + ".MyPermission1";
+    public static class Dashboard
+    {
+        public const string Host = GroupName + ".Dashboard.Host";
+        public const string Tenant = GroupName + ".Dashboard.Tenant";
+    }
+    public static class Projects
+    {
+        public const string Default = GroupName + ".Projects";
+        public const string Create = GroupName + ".Projects.Create";
+        public const string Edit = GroupName + ".Projects.Edit";
+        public const string Delete = GroupName + ".Projects.Delete";
+    }
+    public static class TeamMembers
+    {
+        public const string Default = GroupName + ".TeamMembers";
+        public const string Create = GroupName + ".TeamMembers.Create";
+        public const string Edit = GroupName + ".TeamMembers.Edit";
+        public const string Delete = GroupName + ".TeamMembers.Delete";
+    }
 }

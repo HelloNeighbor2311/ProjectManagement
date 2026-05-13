@@ -1,0 +1,73 @@
+﻿using ProjectManagement.TeamMembers;
+using Shouldly;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Volo.Abp.Modularity;
+using Xunit;
+
+namespace ProjectManagement
+{
+    public abstract class TeamMemberAppService_Tests<TStartupModule>: ProjectManagementTestBase<TStartupModule> where TStartupModule : IAbpModule
+    {
+        private readonly ITeamMemberAppService _teamMemberAppService;
+        protected TeamMemberAppService_Tests()
+        {
+            _teamMemberAppService = GetRequiredService<ITeamMemberAppService>();
+        }
+        [Fact]
+        public async Task Should_Get_All_TeamMembers_Without_Any_Filter()
+        {
+            var result = await _teamMemberAppService.GetListTeamMemberDto(new GetTeamMemberListDto());
+
+            result.TotalCount.ShouldBeGreaterThanOrEqualTo(2);
+            result.Items.ShouldContain(author => author.Name == "Richard Olstand");
+            result.Items.ShouldContain(author => author.Name == ("Michael Oliver"));
+        }
+
+        [Fact]
+        public async Task Should_Get_Filtered_TeamMembers()
+        {
+            var result = await _teamMemberAppService.GetListTeamMemberDto(
+                new GetTeamMemberListDto { Filter = "Olstand" });
+
+            result.TotalCount.ShouldBeGreaterThanOrEqualTo(1);
+            result.Items.ShouldContain(author => author.Name == "Richard Olstand");
+            result.Items.ShouldNotContain(author => author.Name == "Michael Oliver");
+        }
+        [Fact]
+        public async Task Should_Create_A_New_TeamMember()
+        {
+            var authorDto = await _teamMemberAppService.CreateTeamMemberAsync(
+                new CreateTeamMemberDto
+                {
+                    Name = "Edward Bellamy",
+                    Email = "BEward@gmail.com",
+                    Role = "Senior Frontend Developer",
+                    WeeklyCapacity = 40
+                }
+            );
+
+            authorDto.Id.ShouldNotBe(Guid.Empty);
+            authorDto.Name.ShouldBe("Edward Bellamy");
+        }
+        [Fact]
+        public async Task Should_Not_Allow_To_Create_Duplicate_TeamMember()
+        {
+            await Assert.ThrowsAsync<TeamMemberAlreadyExistedException>(async () =>
+            {
+                await _teamMemberAppService.CreateTeamMemberAsync(
+                    new CreateTeamMemberDto
+                    {
+                        Name = "Richard Olstand",
+                        Email = "ORichard@gmail.com",
+                        Role = "UI/UX Designer",
+                        WeeklyCapacity = 40
+                    }
+                );
+            });
+        }
+
+    }
+}

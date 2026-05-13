@@ -1,4 +1,5 @@
 ﻿using ProjectManagement.Projects;
+using ProjectManagement.TeamMembers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,32 +12,23 @@ namespace ProjectManagement
 {
     public class ProjectManagementDataSeederContributor : IDataSeedContributor, ITransientDependency
     {
-        private readonly IRepository<Project, Guid> _projectRepository;
+        private readonly IRepository<TeamMember, Guid> _teamMemberRepository;
 
-        public ProjectManagementDataSeederContributor(IRepository<Project, Guid> projectRepository)
+        public ProjectManagementDataSeederContributor(IRepository<TeamMember, Guid> teamMemberRepository)
         {
-            _projectRepository = projectRepository;
+            _teamMemberRepository = teamMemberRepository;
         }
         public async Task SeedAsync(DataSeedContext context)
         {
-            if(await _projectRepository.GetCountAsync() <= 0)
+            if (await _teamMemberRepository.GetCountAsync() == 0)
             {
-                await _projectRepository.InsertAsync(
-                    new Project
-                    {
-                        Name = "Project 1",
-                        Description = "This is the project 1",
-                        Color = "#ff6f5c"
-                    },
-                    autoSave:true);
-                await _projectRepository.InsertAsync(
-                    new Project
-                    {
-                        Name = "Project 2",
-                        Description = "This is the project 2",
-                        Color = "#5eff4f"
-                    },
-                    autoSave:true);
+                await _teamMemberRepository.InsertAsync(
+                    new TeamMember(Guid.NewGuid(), "Richard Olstand", "ORichard@gmail.com", "Frontend Developer", 40),
+                    autoSave: true);
+
+                await _teamMemberRepository.InsertAsync(
+                    new TeamMember(Guid.NewGuid(), "Michael Oliver", "MOliver@gmail.com", "Backend Developer", 40),
+                    autoSave: true);
             }
         }
     }

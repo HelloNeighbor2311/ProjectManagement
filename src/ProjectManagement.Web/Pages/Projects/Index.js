@@ -5,7 +5,7 @@
         abp.libs.datatables.normalizeConfiguration({
             serverSide: true,
             paging: true,
-            order: [[1, "asc"]],
+            order: [[0, "asc"]],
             searching: false,
             scrollX: true,
             processing: true,
@@ -13,16 +13,19 @@
             columnDefs: [
                 {
                     title: l('Actions'),
+                    width:"20%",
                     rowAction: {
                         items: [
                             {
                                 text: l('Edit'),
+                                visible: abp.auth.isGranted('ProjectManagement.Projects.Edit'),
                                 action: function (data) {
                                     editProject(data.record.id);
                                 }
                             },
                             {
                                 text: l('Delete'),
+                                visible: abp.auth.isGranted('ProjectManagement.Projects.Delete'),
                                 confirmMessage: function (data) {
                                     return l('DeleteConfirmationMessage');
                                 },
@@ -43,20 +46,20 @@
                     data: "color",
                     width: "10%",
                     render: function (data) {
-                        return '<span style="display: inline-block; width: 20px; height: 20px; background-color: ' + (data || '#808080') + '; border-radius: 10px; border: 1px solid #ddd;"></span>';
+                        return '<span style="display: inline-block; width: 15px; height: 15px; background-color: ' + (data || '#808080') + '; border-radius: 10px; border: 1px solid #ddd;"></span> ';
                     },
                     defaultContent: ""
                 },
                 {
                     title: l('Name'),
                     data: "name",
-                    width: "30%",
+                    width: "20%",
                     defaultContent: ""
                 },
                 {
                     title: l('Description'),
                     data: "description",
-                    width: "50%",
+                    width: "40%",
                     render: function (data) {
                         return data || '-';
                     },
@@ -67,8 +70,31 @@
         })
     );
 
+    // Store table reference globally so modals can access it
+    window.projectTable = dataTable;
+
+    var createModal = new abp.ModalManager(abp.appPath + 'Projects/CreateModal');
+    var editModal = new abp.ModalManager(abp.appPath + 'Projects/EditModal');
+
+    createModal.onResult(function () {
+        dataTable.ajax.reload();
+    });
+
+    editModal.onResult(function () {
+        dataTable.ajax.reload();
+    });
+
+    // Listen sự kiện project được tạo từ CreateModal
+    document.addEventListener('projectCreated', function () {
+        dataTable.ajax.reload();
+    });
+
+    $('#NewProjectButton').click(function (e) {
+        e.preventDefault();
+        createModal.open();
+    });
+
     function editProject(id) {
-        abp.message.info(l('EditingProjectInfo') + ': ' + id);
-        // TODO: Implement edit functionality
+        editModal.open({ id: id });
     }
 });

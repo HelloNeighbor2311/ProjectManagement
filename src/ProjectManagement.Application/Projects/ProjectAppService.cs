@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectManagement.Permissions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Volo.Abp.Application.Dtos;
@@ -11,7 +12,11 @@ namespace ProjectManagement.Projects
     {
         public ProjectAppService(IRepository<Project, Guid> repository): base(repository)
         {
-            
+            GetPolicyName = ProjectManagementPermissions.Projects.Default;
+            GetListPolicyName = ProjectManagementPermissions.Projects.Default;
+            CreatePolicyName = ProjectManagementPermissions.Projects.Create;
+            UpdatePolicyName = ProjectManagementPermissions.Projects.Edit;
+            DeletePolicyName = ProjectManagementPermissions.Projects.Delete;
         }
     }
 }

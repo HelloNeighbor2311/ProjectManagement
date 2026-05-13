@@ -1,0 +1,120 @@
+@page
+@using ProjectManagement.Localization
+@using ProjectManagement.Web.Pages.Projects
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model EditModalModel
+@inject IStringLocalizer<ProjectManagementResource> L
+@{
+    Layout = null;
+}
+
+<abp-modal id="EditProjectModal" centered="true">
+    <abp-modal-header title="@L["EditProject"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <form id="EditProjectForm" method="post" asp-page="/Projects/EditModal">
+            <input type="hidden" name="Project.Id" id="Project_Id">
+            <div class="mb-3">
+                <label for="Project_Name_Edit" class="form-label">@L["Name"]</label>
+                <input type="text" class="form-control" id="Project_Name_Edit" name="Project.Name" required>
+            </div>
+            <div class="mb-3">
+                <label for="Project_Description_Edit" class="form-label">@L["Description"]</label>
+                <textarea class="form-control" id="Project_Description_Edit" name="Project.Description" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="Project_Color_Edit" class="form-label">@L["Color"]</label>
+                <div class="d-flex gap-2 align-items-center">
+                    <input type="color" class="form-control form-control-color" id="Project_Color_Edit" name="Project.Color" value="#808080" style="max-width: 80px; height: 38px;">
+                    <div class="d-flex align-items-center gap-2">
+                        <div id="ColorPreviewEdit" style="width: 40px; height: 40px; background-color: #808080; border: 1px solid #ddd; border-radius: 4px;"></div>
+                        <span id="ColorValueEdit" style="font-weight: 500; min-width: 70px;">#808080</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>
+</abp-modal>
+
+<script>
+$(function () {
+    var modal = $('#EditProjectModal');
+    var form = $('#EditProjectForm');
+    var colorInput = $('#Project_Color_Edit');
+    var colorPreview = $('#ColorPreviewEdit');
+    var colorValue = $('#ColorValueEdit');
+
+    // Initialize color preview
+    updateColorDisplay(colorInput.val());
+
+    // Update color preview on change
+    colorInput.on('change input', function () {
+        updateColorDisplay(this.value);
+    });
+
+    // Handle save button click - bind every time modal is shown
+    modal.on('shown.bs.modal', function () {
+        var saveBtn = modal.find('.modal-footer .btn-primary:last');
+
+        if (saveBtn.length) {
+            console.log('Save button found and binding...');
+            // Off previous handlers to avoid multiple bindings
+            saveBtn.off('click').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                console.log('Save button clicked');
+
+                if (!form[0].checkValidity()) {
+                    console.log('Form validation failed');
+                    form.addClass('was-validated');
+                    return;
+                }
+
+                var formData = new FormData(form[0]);
+
+                $.ajax({
+                    type: 'POST',
+                    url: form.attr('action'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        console.log('Success! Closing modal...');
+                        // Reset form to clear unsaved state
+                        form[0].reset();
+                        form.removeClass('was-validated');
+                        // Update color display to default
+                        colorInput.val('#808080');
+                        updateColorDisplay('#808080');
+                        // Close modal
+                        modal.modal('hide');
+                        // Reload the projects table
+                        if (window.projectTable) {
+                            window.projectTable.ajax.reload();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', xhr, status, error);
+                        var errorMsg = 'Error updating project!';
+                        if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.message) {
+                            errorMsg = xhr.responseJSON.error.message;
+                        }
+                        abp.notify.error(errorMsg);
+                    }
+                });
+
+                return false;
+            });
+        } else {
+            console.error('Save button not found');
+        }
+    });
+
+    function updateColorDisplay(color) {
+        colorPreview.css('background-color', color);
+        colorValue.text(color.toUpperCase());
+    }
+});
+</script>
