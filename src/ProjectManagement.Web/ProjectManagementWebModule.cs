@@ -115,9 +115,12 @@ public class ProjectManagementWebModule : AbpModule
         ConfigureSwaggerServices(context.Services);
         Configure<RazorPagesOptions>(options =>
         {
-            options.Conventions.AuthorizePage("/Books/Index", ProjectManagementPermissions.Projects.Default);
-            options.Conventions.AuthorizePage("/Books/CreateModal", ProjectManagementPermissions.Projects.Create);
-            options.Conventions.AuthorizePage("/Books/EditModal", ProjectManagementPermissions.Projects.Edit);
+            options.Conventions.AuthorizePage("/Projects/Index", ProjectManagementPermissions.Projects.Default);
+            options.Conventions.AuthorizePage("/Projects/CreateModal", ProjectManagementPermissions.Projects.Create);
+            options.Conventions.AuthorizePage("/Projects/EditModal", ProjectManagementPermissions.Projects.Edit);
+            options.Conventions.AuthorizePage("/Priorities/Index", ProjectManagementPermissions.Priorities.Default);
+            options.Conventions.AuthorizePage("/Priorities/CreateModal", ProjectManagementPermissions.Priorities.Create);
+            options.Conventions.AuthorizePage("/Priorities/EditModal", ProjectManagementPermissions.Priorities.Edit);
         });
 
         context.Services.AddMapperlyObjectMapper<ProjectManagementWebModule>();

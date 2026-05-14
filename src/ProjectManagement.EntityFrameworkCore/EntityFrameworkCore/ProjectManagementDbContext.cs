@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Board;
+using ProjectManagement.Enums;
+using ProjectManagement.Priorities;
 using ProjectManagement.Projects;
 using ProjectManagement.TeamMembers;
 using ProjectManagement.WorkTask;
@@ -33,6 +35,7 @@ public class ProjectManagementDbContext :
     //public DbSet<Boards> Boards { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<TeamMember> TeamMembers { get; set; }
+    public DbSet<Priority> Priorities { get; set; }
     #region Entities from the modules
 
     /* Notice: We only implemented IIdentityDbContext and ITenantManagementDbContext
@@ -120,6 +123,12 @@ public class ProjectManagementDbContext :
             b.Property(x => x.Email).IsRequired();
             b.Property(x => x.Role).IsRequired();
             b.Property(x => x.WeeklyCapacity).IsRequired();
+        });
+        builder.Entity<Priority>(b =>
+        {
+            b.ToTable(ProjectManagementConsts.DbTablePrefix + "Priorities", ProjectManagementConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.Title).IsRequired();
         });
     }
 }

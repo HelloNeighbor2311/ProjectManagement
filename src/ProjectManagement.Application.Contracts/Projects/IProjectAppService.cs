@@ -6,7 +6,7 @@ using Volo.Abp.Application.Services;
 
 namespace ProjectManagement.Projects
 {
-    public interface IProjectAppService: ICrudAppService<ProjectDto,Guid,PagedAndSortedResultRequestDto,CreateUpdateProjectDto>
+    public interface IProjectAppService : ICrudAppService<ProjectDto, Guid, ProjectPagedAndSortedResultRequestDto, CreateUpdateProjectDto>
     {
     }
 }

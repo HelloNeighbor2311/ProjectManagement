@@ -28,6 +28,12 @@ public class ProjectManagementPermissionDefinitionProvider : PermissionDefinitio
         teamMemberPermission.AddChild(ProjectManagementPermissions.TeamMembers.Create, L("Permission:TeamMembers.Create"));
         teamMemberPermission.AddChild(ProjectManagementPermissions.TeamMembers.Edit, L("Permission:TeamMembers.Edit"));
         teamMemberPermission.AddChild(ProjectManagementPermissions.TeamMembers.Delete, L("Permission:TeamMembers.Delete"));
+
+        //Priority permission
+        var priorityPermission = projectManagementGroup.AddPermission(ProjectManagementPermissions.Priorities.Default, L("Permission:Priorities"));
+        priorityPermission.AddChild(ProjectManagementPermissions.Priorities.Create, L("Permission:Priorities.Create"));
+        priorityPermission.AddChild(ProjectManagementPermissions.Priorities.Edit, L("Permission:Priorities.Edit"));
+        priorityPermission.AddChild(ProjectManagementPermissions.Priorities.Delete, L("Permission:Priorities.Delete"));
     }
 
     private static LocalizableString L(string name)

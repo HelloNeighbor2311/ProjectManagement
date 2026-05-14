@@ -1,0 +1,62 @@
+@page
+@using ProjectManagement.Localization
+@using ProjectManagement.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using ProjectManagement.Web.Pages.TeamMembers
+@using Microsoft.Extensions.Localization
+@inject IAuthorizationService AuthorizationService
+@model IndexModel
+@inject IStringLocalizer<ProjectManagementResource> L
+@section styles
+{
+    <abp-style src="/Pages/TeamMembers/Index.css" />
+}
+@section scripts
+{
+    <abp-script src="/Pages/TeamMembers/Index.js" />
+}
+
+<div class="team-members-page">
+    <div class="team-members-toolbar">
+        <div>
+            <h1 class="team-members-title">@L["TeamMembers"]</h1>
+            <p class="team-members-subtitle">@L["TeamMembersSubtitle"]</p>
+        </div>
+
+        @if (await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.TeamMembers.Create))
+        {
+            <abp-button id="NewTeamMemberButton"
+                        text="@L["NewTeamMember"].Value"
+                        icon="plus"
+                        button-type="Primary" />
+        }
+    </div>
+
+    <div id="TeamMemberLoading" class="team-members-state team-members-loading">
+        <div class="team-member-skeleton-grid">
+            <div class="team-member-skeleton-card"></div>
+            <div class="team-member-skeleton-card"></div>
+            <div class="team-member-skeleton-card"></div>
+            <div class="team-member-skeleton-card"></div>
+            <div class="team-member-skeleton-card"></div>
+            <div class="team-member-skeleton-card"></div>
+        </div>
+    </div>
+
+    <div id="TeamMemberEmpty" class="team-members-state team-members-empty d-none">
+        <div class="team-members-empty-icon">👥</div>
+        <h3>@L["NoTeamMembersFound"]</h3>
+        <p>@L["NoTeamMembersFoundDescription"]</p>
+    </div>
+
+    <div id="TeamMemberError" class="team-members-state team-members-error d-none">
+        <h3>@L["CouldNotLoadTeamMembers"]</h3>
+        <p id="TeamMemberErrorMessage"></p>
+        <abp-button id="RetryTeamMembersButton"
+                    text="@L["Retry"].Value"
+                    icon="refresh"
+                    button-type="Secondary" />
+    </div>
+
+    <div id="TeamMemberGrid" class="row g-4 team-member-grid d-none"></div>
+</div>

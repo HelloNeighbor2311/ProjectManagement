@@ -1,0 +1,32 @@
+﻿@page
+@using ProjectManagement.Localization
+@using ProjectManagement.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using ProjectManagement.Web.Pages.Projects
+@using Microsoft.Extensions.Localization
+@inject IAuthorizationService AuthorizationService
+@model IndexModel
+@inject IStringLocalizer<ProjectManagementResource> L
+@section scripts
+{
+    <abp-script src="/Pages/Priorities/Index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-column size-md="_6">
+            <abp-card-title>@L["Priorities"]</abp-card-title>
+        </abp-column>
+        <abp-column size-md="_11" class="text-end">
+            @if (await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Priorities.Create))
+            {
+                <abp-button id="NewPriorityButton"
+                            text="@L["NewPriority"].Value"
+                            icon="plus"
+                            button-type="Primary" />
+            }
+        </abp-column>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="PriorityTable"></abp-table>
+    </abp-card-body>
+</abp-card>

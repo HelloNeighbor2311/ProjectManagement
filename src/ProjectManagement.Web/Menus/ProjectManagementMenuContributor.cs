@@ -58,6 +58,18 @@ public class ProjectManagementMenuContributor : IMenuContributor
                     l["Menu:Project"],
                     url: "/Projects"
                 ).RequirePermissions(ProjectManagementPermissions.Projects.Default)
+            ).AddItem(
+                new ApplicationMenuItem(
+                    ProjectManagementMenus.TeamMembers,
+                    l["Menu:TeamMembers"],
+                    url: "/TeamMembers"
+                ).RequirePermissions(ProjectManagementPermissions.TeamMembers.Default)
+            ).AddItem(
+                new ApplicationMenuItem(
+                    ProjectManagementMenus.Priorities,
+                    l["Menu:Priorities"],
+                    url: "/Priorities"
+                ).RequirePermissions(ProjectManagementPermissions.Priorities.Default)
             )
         );
         return Task.CompletedTask;

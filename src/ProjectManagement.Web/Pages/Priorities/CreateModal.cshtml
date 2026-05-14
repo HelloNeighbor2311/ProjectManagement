@@ -1,0 +1,19 @@
+﻿@page
+@using ProjectManagement.Localization
+@using ProjectManagement.Web.Pages.Priorities;
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model CreateModalModel
+@inject IStringLocalizer<ProjectManagementResource> L
+@{
+    Layout = null;
+}
+<abp-dynamic-form abp-model="Priority" asp-page="/Priorities/CreateModal">
+    <abp-modal>
+        <abp-modal-header title="@L["NewPriority"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-form-content />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</abp-dynamic-form>

@@ -1,0 +1,57 @@
+@page
+@using ProjectManagement.Localization
+@using ProjectManagement.Web.Pages.TeamMembers
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model EditModalModel
+@inject IStringLocalizer<ProjectManagementResource> L
+@{
+    Layout = null;
+}
+
+<abp-modal id="EditTeamMemberModal" centered="true">
+    <abp-modal-header title="@L["EditTeamMember"].Value" close-button="true"></abp-modal-header>
+    <abp-modal-body>
+        <form id="EditTeamMemberForm" method="post" asp-page="/TeamMembers/EditModal" class="team-member-form">
+            <input asp-for="TeamMember.Id" type="hidden" />
+
+            <div class="team-member-form__field team-member-form__field--full">
+                <label for="TeamMember_Name_Edit" class="team-member-form__label">@L["FullName"] <span>*</span></label>
+                <input asp-for="TeamMember.Name" type="text" class="form-control team-member-form__input" id="TeamMember_Name_Edit" required>
+            </div>
+
+            <div class="team-member-form__field team-member-form__field--full">
+                <label for="TeamMember_Role_Edit" class="team-member-form__label">@L["Role"] <span>*</span></label>
+                <input asp-for="TeamMember.Role" type="text" class="form-control team-member-form__input" id="TeamMember_Role_Edit" required>
+            </div>
+
+            <div class="team-member-form__field">
+                <label for="TeamMember_Email_Edit" class="team-member-form__label">@L["Email"] <span>*</span></label>
+                <input asp-for="TeamMember.Email" type="email" class="form-control team-member-form__input" id="TeamMember_Email_Edit" required>
+            </div>
+
+            <div class="team-member-form__field">
+                <label for="TeamMember_WeeklyCapacity_Edit" class="team-member-form__label">@L["WeeklyCapacity"]</label>
+                <div class="team-member-capacity-input">
+                    <input asp-for="TeamMember.WeeklyCapacity" type="number" class="form-control team-member-form__input team-member-form__input--capacity" id="TeamMember_WeeklyCapacity_Edit" min="0" required>
+                    <span class="team-member-capacity-input__suffix">hrs</span>
+                </div>
+            </div>
+        </form>
+    </abp-modal-body>
+    <abp-modal-footer>
+        <abp-button button-type="Secondary" text="@L["Cancel"].Value" data-bs-dismiss="modal" />
+        <abp-button button-type="Primary" text="@L["Save"].Value" id="EditTeamMemberSaveButton" />
+    </abp-modal-footer>
+</abp-modal>
+
+<script>
+$(function () {
+    var form = $('#EditTeamMemberForm');
+    
+    $('#EditTeamMemberSaveButton').on('click', function (e) {
+        e.preventDefault();
+        form.trigger('submit');
+    });
+});
+</script>

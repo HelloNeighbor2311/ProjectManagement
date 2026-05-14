@@ -16,7 +16,6 @@ namespace ProjectManagement.WorkTask
         public DateTimeOffset StartedTime { get; set; }
         public DateTimeOffset EndedTime { get; set; }
         public Status Status { get; set; }
-        public Priorities Priority { get; set; }
 
         public Boards Board { get; set; }
 

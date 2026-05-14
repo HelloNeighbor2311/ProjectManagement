@@ -1,5 +1,5 @@
 {
-  "culture": "en",
+    "culture": "en",
   "texts": {
     "AppName": "ProjectManagement",
     "Menu:Home": "Home",
@@ -17,7 +17,7 @@
     "AreYouSure": "Are you sure?",
     "AreYouSureToDelete": "Are you sure you want to delete this item?",
     "EditProject": "Edit Project",
-    "DeleteConfirmationMessage": "Are you sure you want to delete this task?",
+    "ProjectDeleteConfirmationMessage": "Are you sure you want to delete this project?",
     "DeletedSuccessfully": "Deleted successfully!",
     "SavedSuccessfully": "Saved successfully!",
     "NewProject": "New Project",
@@ -30,7 +30,33 @@
     "Permission:Projects.Create": "Creating new projects",
     "Permission:Projects.Edit": "Editing the projects",
     "Permission:Projects.Delete": "Deleting the projects",
-    "ProjectManagement:00001": "There is already a team member with the same name: {name}"
-
+    "Permission:TeamMembers": "Team Members",
+    "Permission:TeamMembers.Create": "Creating new team members",
+    "Permission:TeamMembers.Edit": "Editing the team members",
+    "Permission:TeamMembers.Delete": "Deleting the team members",
+    "Menu:TeamMembers": "Team Members",
+    "TeamMembers": "Team Members",
+    "NewTeamMember": "New Team Member",
+    "EditTeamMember": "Edit Team Member",
+    "FullName": "Full Name",
+    "TeamMembersSubtitle": "Manage members, roles, email addresses, and weekly capacity in one place.",
+    "NoTeamMembersFound": "No team members found",
+    "NoTeamMembersFoundDescription": "Create a new team member to start tracking workload and capacity.",
+    "CouldNotLoadTeamMembers": "Could not load team members.",
+    "Retry": "Retry",
+    "Free": "free",
+    "Email": "Email",
+    "Role": "Role",
+    "WeeklyCapacity": "Weekly Capacity",
+    "CurrentCapacity": "Current Capacity",
+    "ProjectManagement:00001": "There is already a team member with the same name: {name}",
+    "NewPriority": "New Priority",
+    "Priorities": "Priorities",
+    "Menu:Priorities": "Priorities",
+    "PriorityDeleteConfirmationMessage": "Are you sure you want to delete this priority?",
+    "Permission:Priorities": "Priorities",
+    "Permission:Priorities.Create": "Creating new priority",
+    "Permission:Priorities.Edit": "Editing the priority",
+    "Permission:Priorities.Delete": "Deleting the priority"
   }
 }
