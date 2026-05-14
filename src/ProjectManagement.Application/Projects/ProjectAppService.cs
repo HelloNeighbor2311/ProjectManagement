@@ -29,6 +29,7 @@ namespace ProjectManagement.Projects
 
             var query = await Repository.GetQueryableAsync();
 
+            // FE sends `filter`; BE trims and applies keyword search on Name/Description.
             var filter = input.Filter?.Trim();
             if (!string.IsNullOrWhiteSpace(filter))
             {
@@ -38,6 +39,7 @@ namespace ProjectManagement.Projects
                 );
             }
 
+            // Keep ABP paging/sorting flow intact after filtering.
             var totalCount = await AsyncExecuter.CountAsync(query);
 
             query = ApplySorting(query, input);

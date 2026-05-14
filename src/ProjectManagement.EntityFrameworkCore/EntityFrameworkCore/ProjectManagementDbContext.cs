@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectManagement.Board;
 using ProjectManagement.Enums;
 using ProjectManagement.Priorities;
 using ProjectManagement.Projects;

@@ -27,6 +27,19 @@
         </abp-column>
     </abp-card-header>
     <abp-card-body>
+        <div class="mb-3 p-2 rounded">
+            <div class="input-group rounded overflow-hidden" style="background-color: #FAF7F7;">
+                <input id="PrioritySearch"
+                       type="search"
+                       class="form-control border-0"
+                       style="background-color: #FAF7F7;"
+                       placeholder="@L["Search"]"
+                       aria-label="@L["Search"]" />
+                <button id="PrioritySearchButton" class="btn btn-primary px-4" type="button" aria-label="@L["Search"]">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
         <abp-table striped-rows="true" id="PriorityTable"></abp-table>
     </abp-card-body>
 </abp-card>

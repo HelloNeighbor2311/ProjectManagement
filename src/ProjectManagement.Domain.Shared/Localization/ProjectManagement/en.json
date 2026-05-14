@@ -57,6 +57,7 @@
     "Permission:Priorities": "Priorities",
     "Permission:Priorities.Create": "Creating new priority",
     "Permission:Priorities.Edit": "Editing the priority",
-    "Permission:Priorities.Delete": "Deleting the priority"
+    "Permission:Priorities.Delete": "Deleting the priority",
+    "ProjectManagement:00002": "There is already a status with the same title : {title}"
   }
 }

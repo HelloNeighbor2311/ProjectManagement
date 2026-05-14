@@ -6,7 +6,7 @@ using Volo.Abp.Application.Services;
 
 namespace ProjectManagement.Priorities
 {
-    public interface IPriorityAppService: ICrudAppService<PriorityDto, Guid, PagedAndSortedResultRequestDto,CreateUpdatePriorityDto>
+    public interface IPriorityAppService: ICrudAppService<PriorityDto, Guid, PriorityPagedAndSortedResultRequestDto,CreateUpdatePriorityDto>
     {
     }
 }

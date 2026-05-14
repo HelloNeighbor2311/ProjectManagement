@@ -11,6 +11,11 @@
             processing: true,
             ajax: abp.libs.datatables.createAjax(
                 projectManagement.priorities.priority.getList,
+                function () {
+                    return {
+                        filter: $('#PrioritySearch').val(),
+                    };
+                },
             ),
             columnDefs: [
                 {
@@ -78,6 +83,26 @@
     $('#NewPriorityButton').click(function (e) {
         e.preventDefault();
         createModal.open();
+    });
+
+    $('#PrioritySearchButton').on('click', function () {
+        lastSearchValue = ($('#PrioritySearch').val() || '').trim();
+        dataTable.ajax.reload();
+    });
+
+    $('#PrioritySearch').on('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            lastSearchValue = ($('#PrioritySearch').val() || '').trim();
+            dataTable.ajax.reload();
+        }
+    });
+    $('#PrioritySearch').on('input search', function () {
+        var currentValue = ($(this).val() || '').trim();
+        if (lastSearchValue !== '' && currentValue === '') {
+            dataTable.ajax.reload();
+        }
+        lastSearchValue = currentValue;
     });
 
     function editPriority(id) {

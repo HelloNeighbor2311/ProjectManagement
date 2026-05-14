@@ -11,51 +11,6 @@
 {
     <abp-script src="/Pages/Projects/Index.js" />
 }
-<style>
-    .project-search-wrap {
-        position: relative;
-        background-color: #ffffff;
-        border: 1px solid #e9eef5;
-        border-radius: 0.75rem;
-    }
-
-    .project-search-input {
-        background-color: #f8fbff !important;
-    }
-
-    .project-search-results {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: calc(100% + 0.35rem);
-        z-index: 20;
-        background: #ffffff;
-        border: 1px solid #e9eef5;
-        border-radius: 0.5rem;
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-        max-height: 260px;
-        overflow-y: auto;
-    }
-
-    .project-search-item {
-        display: block;
-        width: 100%;
-        text-align: left;
-        background: transparent;
-        border: 0;
-        padding: 0.65rem 0.9rem;
-        color: #1f2937;
-    }
-
-    .project-search-item:hover {
-        background: #f3f8ff;
-    }
-
-    .project-search-empty {
-        padding: 0.65rem 0.9rem;
-        color: #6b7280;
-    }
-</style>
 <abp-card>
     <abp-card-header>
         <abp-column size-md="_6">
@@ -72,18 +27,19 @@
         </abp-column>
     </abp-card-header>
     <abp-card-body>
-        <div class="mb-3 p-2 project-search-wrap">
-            <div class="input-group">
+        @* Search UI: user enters keyword here, then clicks magnifier or presses Enter to trigger DataTable reload. *@
+        <div class="mb-3 p-2 rounded">
+            <div class="input-group rounded overflow-hidden" style="background-color: #FAF7F7;">
                 <input id="ProjectSearch"
                        type="search"
-                       class="form-control border-0 project-search-input"
+                       class="form-control border-0"
+                       style="background-color: #FAF7F7;"
                        placeholder="@L["Search"]"
                        aria-label="@L["Search"]" />
                 <button id="ProjectSearchButton" class="btn btn-primary px-4" type="button" aria-label="@L["Search"]">
                     <i class="fa fa-search"></i>
                 </button>
             </div>
-            <div id="ProjectSearchResults" class="project-search-results d-none"></div>
         </div>
         <abp-table striped-rows="true" id="ProjectTable"></abp-table>
     </abp-card-body>

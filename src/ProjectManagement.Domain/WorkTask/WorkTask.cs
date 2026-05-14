@@ -8,16 +8,12 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace ProjectManagement.WorkTask
 {
-    public class Tasks: AuditedAggregateRoot<Guid>
+    public class WorkTask: AuditedAggregateRoot<Guid>
     {
         public string Title { get; set; } = string.Empty;
-        public Project Project { get; set; }
-        public Assignees Assignees { get; set; }
+        public Guid  ProjectId { get; set; }
         public DateTimeOffset StartedTime { get; set; }
         public DateTimeOffset EndedTime { get; set; }
-        public Status Status { get; set; }
-
-        public Boards Board { get; set; }
 
     }
 }

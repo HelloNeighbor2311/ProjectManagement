@@ -1,83 +1,6 @@
 ﻿$(function () {
     var l = abp.localization.getResource('ProjectManagement');
-    var $searchInput = $('#ProjectSearch');
-    var $searchButton = $('#ProjectSearchButton');
-    var $searchResults = $('#ProjectSearchResults');
-    var suggestionRequestToken = 0;
-
-    function runSearch() {
-        $searchResults.addClass('d-none').empty();
-        dataTable.ajax.reload();
-    }
-
-    function hideSuggestions() {
-        $searchResults.addClass('d-none').empty();
-    }
-
-    function renderSuggestions(items) {
-        $searchResults.empty();
-
-        if (!items || !items.length) {
-            $searchResults
-                .append(
-                    $('<div/>', {
-                        class: 'project-search-empty',
-                        text: l('NoDataAvailable'),
-                    }),
-                )
-                .removeClass('d-none');
-            return;
-        }
-
-        items.forEach(function (item) {
-            $('<button/>', {
-                type: 'button',
-                class: 'project-search-item',
-                text: item.name || '-',
-            })
-                .on('click', function () {
-                    $searchInput.val(item.name || '');
-                    hideSuggestions();
-                    $searchInput.trigger('focus');
-                })
-                .appendTo($searchResults);
-        });
-
-        $searchResults.removeClass('d-none');
-    }
-
-    var fetchSuggestions = abp.utils.debounce(function () {
-        var keyword = ($searchInput.val() || '').trim();
-
-        if (!keyword) {
-            hideSuggestions();
-            return;
-        }
-
-        var currentToken = ++suggestionRequestToken;
-        projectManagement.projects.project
-            .getList({
-                filter: keyword,
-                skipCount: 0,
-                maxResultCount: 6,
-                sorting: 'name',
-            })
-            .then(function (response) {
-                if (currentToken !== suggestionRequestToken) {
-                    return;
-                }
-
-                var items = response && response.items ? response.items : [];
-                renderSuggestions(items);
-            })
-            .catch(function () {
-                if (currentToken !== suggestionRequestToken) {
-                    return;
-                }
-
-                hideSuggestions();
-            });
-    }, 250);
+    var lastSearchValue = '';
 
     var dataTable = $('#ProjectTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({
@@ -87,11 +10,12 @@
             searching: false,
             scrollX: true,
             processing: true,
+            // Send current keyword to backend as `filter` on every table reload.
             ajax: abp.libs.datatables.createAjax(
                 projectManagement.projects.project.getList,
                 function () {
                     return {
-                        filter: $searchInput.val(),
+                        filter: $('#ProjectSearch').val(),
                     };
                 },
             ),
@@ -187,25 +111,28 @@
         dataTable.ajax.reload();
     });
 
-    $searchInput.on('input', function () {
-        fetchSuggestions();
+    // Search only when user explicitly clicks the magnifier button.
+    $('#ProjectSearchButton').on('click', function () {
+        lastSearchValue = ($('#ProjectSearch').val() || '').trim();
+        dataTable.ajax.reload();
     });
 
-    $searchInput.on('keydown', function (e) {
+    // Enter key behaves the same as clicking the magnifier button.
+    $('#ProjectSearch').on('keydown', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            runSearch();
+            lastSearchValue = ($('#ProjectSearch').val() || '').trim();
+            dataTable.ajax.reload();
         }
     });
 
-    $searchButton.on('click', function () {
-        runSearch();
-    });
-
-    $(document).on('click', function (e) {
-        if (!$(e.target).closest('.project-search-wrap').length) {
-            hideSuggestions();
+    // Auto reset to unfiltered list when search box is cleared (Backspace or native clear "X").
+    $('#ProjectSearch').on('input search', function () {
+        var currentValue = ($(this).val() || '').trim();
+        if (lastSearchValue !== '' && currentValue === '') {
+            dataTable.ajax.reload();
         }
+        lastSearchValue = currentValue;
     });
 
     $('#NewProjectButton').click(function (e) {
