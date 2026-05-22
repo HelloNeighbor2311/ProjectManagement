@@ -19,7 +19,7 @@ namespace ProjectManagement
         [Fact]
         public async Task Should_Get_All_TeamMembers_Without_Any_Filter()
         {
-            var result = await _teamMemberAppService.GetListTeamMemberDto(new GetTeamMemberListDto());
+            var result = await _teamMemberAppService.GetListTeamMemberDto(new TeamMemberPagedAndSortedResultRequestDto());
 
             result.TotalCount.ShouldBeGreaterThanOrEqualTo(2);
             result.Items.ShouldContain(author => author.Name == "Richard Olstand");
@@ -30,7 +30,7 @@ namespace ProjectManagement
         public async Task Should_Get_Filtered_TeamMembers()
         {
             var result = await _teamMemberAppService.GetListTeamMemberDto(
-                new GetTeamMemberListDto { Filter = "Olstand" });
+                new TeamMemberPagedAndSortedResultRequestDto { Filter = "Olstand" });
 
             result.TotalCount.ShouldBeGreaterThanOrEqualTo(1);
             result.Items.ShouldContain(author => author.Name == "Richard Olstand");

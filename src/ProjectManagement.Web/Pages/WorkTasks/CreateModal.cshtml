@@ -1,0 +1,139 @@
+@page
+@using ProjectManagement.Localization
+@using ProjectManagement.Web.Pages.WorkTasks
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model CreateModalModel
+@inject IStringLocalizer<ProjectManagementResource> L
+@{
+    Layout = null;
+}
+
+<abp-modal id="CreateWorkTaskModal" centered="true" size="Large">
+    <abp-modal-header title="@L["NewTask"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <form id="CreateWorkTaskForm" method="post" asp-page="/WorkTasks/CreateModal" class="worktasks-form">
+            <div class="worktasks-form-grid">
+                <div class="worktasks-form-field">
+                    <label for="WorkTask_Title" class="form-label">@L["Title"]</label>
+                    <input type="text" class="form-control" id="WorkTask_Title" name="WorkTask.Title" value="@Model.WorkTask.Title" required>
+                </div>
+                <div class="worktasks-form-field">
+                    <label for="WorkTask_ProjectId" class="form-label">@L["Project"]</label>
+                    <select class="form-select" id="WorkTask_ProjectId" name="WorkTask.ProjectId" required>
+                        @foreach (var item in Model.Projects)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="worktasks-form-field">
+                    <label for="WorkTask_StatusId" class="form-label">@L["Status"]</label>
+                    <select class="form-select" id="WorkTask_StatusId" name="WorkTask.StatusId" required>
+                        @foreach (var item in Model.Statuses)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="worktasks-form-field">
+                    <label for="WorkTask_PriorityId" class="form-label">@L["Priority"]</label>
+                    <select class="form-select" id="WorkTask_PriorityId" name="WorkTask.PriorityId" required>
+                        @foreach (var item in Model.Priorities)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="worktasks-form-field">
+                    <label for="WorkTask_AssigneeId" class="form-label">@L["Assignee"]</label>
+                    <select class="form-select" id="WorkTask_AssigneeId" name="WorkTask.AssigneeId">
+                        <option value="">-</option>
+                        @foreach (var item in Model.Assignees)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="worktasks-form-field">
+                    <label for="WorkTask_StartedDate" class="form-label">@L["StartDate"]</label>
+                    <input type="date" class="form-control" id="WorkTask_StartedDate" name="WorkTask.StartedDate" value="@Model.WorkTask.StartedDate.ToString("yyyy-MM-dd")" required>
+                </div>
+                <div class="worktasks-form-field">
+                    <label for="WorkTask_EndedDate" class="form-label">@L["EndDate"]</label>
+                    <input type="date" class="form-control" id="WorkTask_EndedDate" name="WorkTask.EndedDate" value="@Model.WorkTask.EndedDate.ToString("yyyy-MM-dd")" required>
+                </div>
+            </div>
+        </form>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>
+</abp-modal>
+
+<script>
+$(function () {
+    var modal = $('#CreateWorkTaskModal');
+    var form = $('#CreateWorkTaskForm');
+
+    modal.on('shown.bs.modal', function () {
+        var saveBtn = modal.find('.modal-footer .btn-primary:last');
+
+        if (!saveBtn.length) {
+            return;
+        }
+
+        saveBtn.off('click').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!form[0].checkValidity()) {
+                form.addClass('was-validated');
+                return;
+            }
+
+
+                var formData = new FormData(form[0]);
+                // Ensure date fields are explicitly included (avoid empty/missing binding)
+                try {
+                    formData.set('WorkTask.StartedDate', $('#WorkTask_StartedDate').val());
+                    formData.set('WorkTask.EndedDate', $('#WorkTask_EndedDate').val());
+                } catch (err) {
+                    console.log('Error setting date fields on FormData', err);
+                }
+
+                // DEBUG: log date input values and entire FormData entries
+                try {
+                    console.log('WorkTask.StartedDate input value =', $('#WorkTask_StartedDate').val());
+                    console.log('WorkTask.EndedDate input value =', $('#WorkTask_EndedDate').val());
+                    var entries = [];
+                    formData.forEach(function (value, key) { entries.push(key + '=' + value); });
+                    console.log('FormData entries:', entries);
+                } catch (err) {
+                    console.log('FormData log error', err);
+                }
+
+            $.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
+            })
+                .done(function () {
+                    form[0].reset();
+                    form.removeClass('was-validated');
+                    modal.modal('hide');
+                    document.dispatchEvent(new CustomEvent('workTaskCreated'));
+                })
+                .fail(function (xhr) {
+                    // Log full response for debugging model binding errors
+                    try { console.log('XHR responseText:', xhr.responseText); } catch (e) { }
+                    var errorMsg = 'Error creating task!';
+                    if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.message) {
+                        errorMsg = xhr.responseJSON.error.message;
+                    }
+                    abp.notify.error(errorMsg);
+                });
+        });
+    });
+});
+</script>

@@ -49,7 +49,6 @@
     "Role": "Role",
     "WeeklyCapacity": "Weekly Capacity",
     "CurrentCapacity": "Current Capacity",
-    "ProjectManagement:00001": "There is already a team member with the same name: {name}",
     "NewPriority": "New Priority",
     "Priorities": "Priorities",
     "Menu:Priorities": "Priorities",
@@ -58,6 +57,21 @@
     "Permission:Priorities.Create": "Creating new priority",
     "Permission:Priorities.Edit": "Editing the priority",
     "Permission:Priorities.Delete": "Deleting the priority",
-    "ProjectManagement:00002": "There is already a status with the same title : {title}"
+    "Permission:Statuses": "Statuses",
+    "Permission:Statuses.Create": "Creating new statuses",
+    "Permission:Statuses.Delete": "Deleting the statuses",
+    "Menu:Tasks": "Tasks",
+    "Permission:Tasks": "Tasks",
+    "Permission:Tasks.Create": "Creating new task",
+    "Permission:Tasks.Edit": "Editing the task",
+    "Permission:Tasks.Delete": "Deleting the task",
+    "SuccessfullyDeleted": "Deleted object successful",
+    "TaskDeleteConfirmationMessage":"Are you sure you want to delete this task ?",
+
+    //Exception
+    "ProjectManagement:00001": "There is already a team member with the same name: {name}",
+    "ProjectManagement:00002": "There is already a status with the same title : {title}",
+    "ProjectManagement:00003": "Invalid start time or end time for worktask",
+    "ProjectManagement:00004": "There is already a work task with the same title: {title}"
   }
 }

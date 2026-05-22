@@ -10,7 +10,7 @@ namespace ProjectManagement.TeamMembers
     public interface ITeamMemberAppService : IApplicationService
     {
         Task<TeamMemberDto> GetTeamMemberAsync(Guid id);
-        Task<PagedResultDto<TeamMemberDto>> GetListTeamMemberDto(GetTeamMemberListDto input);
+        Task<PagedResultDto<TeamMemberDto>> GetListTeamMemberDto(TeamMemberPagedAndSortedResultRequestDto input);
         Task<TeamMemberDto> CreateTeamMemberAsync(CreateTeamMemberDto input);
         Task UpdateTeamMemberAsync(Guid id, UpdateTeamMemberDto input);
         Task DeleteTeamMemberAsync(Guid id);

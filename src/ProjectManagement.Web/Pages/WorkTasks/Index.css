@@ -1,0 +1,219 @@
+.worktasks-page {
+    margin: 0.5rem auto 0;
+    max-width: 1200px;
+}
+
+.worktasks-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.worktasks-header-left,
+.worktasks-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.worktasks-searchbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.worktasks-search {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    background: #f3f7fb;
+}
+
+.worktasks-search input {
+    background: transparent;
+    border: 0;
+    padding: 0.85rem 1rem;
+    height: 3rem;
+}
+
+.worktasks-search .btn {
+    border-radius: 0;
+    min-width: 3.5rem;
+    height: 3rem;
+}
+
+.worktasks-filter-toggle {
+    height: 3rem;
+    white-space: nowrap;
+    padding: 0 1.25rem;
+}
+
+.worktasks-filters {
+    margin: 1rem 0;
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 1rem;
+    border: 1px solid #e7edf4;
+}
+
+.worktasks-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.worktasks-filter-label {
+    font-weight: 700;
+    color: #52647a;
+    font-size: 0.9rem;
+}
+
+.worktasks-filter-select {
+    border-radius: 0.85rem;
+    background: #f5f8fc;
+    border: 1px solid #e1e9f2;
+    height: 3rem;
+}
+
+.worktasks-table-wrapper {
+    background: #ffffff;
+    border-radius: 1rem;
+    border: 1px solid #e7edf4;
+    overflow: hidden;
+    min-height: 240px;
+}
+
+.worktasks-table {
+    margin: 0;
+}
+
+.worktasks-table thead th {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: #8ea0b4;
+    border-bottom: 1px solid #edf2f7;
+    background: #ffffff;
+}
+
+.worktasks-table tbody td {
+    vertical-align: middle;
+    color: #3d5268;
+}
+
+.worktasks-col-actions {
+    width: 120px;
+}
+
+.worktasks-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #3a5bff;
+    color: #ffffff;
+    border: 0;
+    border-radius: 0.7rem;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+}
+
+.worktasks-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.worktasks-badge.status-default {
+    background: #6f7cff;
+}
+
+.worktasks-badge.status-todo {
+    background: #6d5efc;
+}
+
+.worktasks-badge.status-inprogress {
+    background: #2f5fff;
+}
+
+.worktasks-badge.status-review {
+    background: #f39c12;
+}
+
+.worktasks-badge.status-done {
+    background: #2ecc71;
+}
+
+.worktasks-badge.priority-low {
+    background: #6f7cff;
+}
+
+.worktasks-badge.priority-medium {
+    background: #4aa3c5;
+}
+
+.worktasks-badge.priority-high {
+    background: #f39c12;
+}
+
+.worktasks-badge.priority-critical {
+    background: #d7263d;
+}
+
+.worktasks-state {
+    margin-top: 1rem;
+}
+
+#CreateWorkTaskModal .modal-header {
+    border-bottom: 1px solid #edf2f7;
+}
+
+#CreateWorkTaskModal .modal-footer {
+    border-top: 1px solid #edf2f7;
+}
+
+.worktasks-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.worktasks-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.worktasks-skeleton-row {
+    height: 54px;
+    border-radius: 0.75rem;
+    background: linear-gradient(90deg, #f2f5fa 0%, #e9eef5 50%, #f2f5fa 100%);
+    background-size: 200% 100%;
+    animation: worktasks-skeleton 1.4s ease infinite;
+    margin-bottom: 0.75rem;
+}
+
+@keyframes worktasks-skeleton {
+    0% {
+        background-position: 0% 0%;
+    }
+    100% {
+        background-position: -200% 0%;
+    }
+}
+
+@media (max-width: 991px) {
+    .worktasks-searchbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .worktasks-form-grid {
+        grid-template-columns: 1fr;
+    }
+}

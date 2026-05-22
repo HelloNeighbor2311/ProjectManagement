@@ -34,6 +34,17 @@ public class ProjectManagementPermissionDefinitionProvider : PermissionDefinitio
         priorityPermission.AddChild(ProjectManagementPermissions.Priorities.Create, L("Permission:Priorities.Create"));
         priorityPermission.AddChild(ProjectManagementPermissions.Priorities.Edit, L("Permission:Priorities.Edit"));
         priorityPermission.AddChild(ProjectManagementPermissions.Priorities.Delete, L("Permission:Priorities.Delete"));
+
+        //Status permission
+        var statusPermission = projectManagementGroup.AddPermission(ProjectManagementPermissions.Statuses.Default, L("Permission:Statuses"));
+        statusPermission.AddChild(ProjectManagementPermissions.Statuses.Create, L("Permission:Statuses.Create"));
+        statusPermission.AddChild(ProjectManagementPermissions.Statuses.Delete, L("Permission:Statuses.Delete"));
+        
+        //Tasks permission
+        var taskPermission = projectManagementGroup.AddPermission(ProjectManagementPermissions.Tasks.Default, L("Permission:Tasks"));
+        taskPermission.AddChild(ProjectManagementPermissions.Tasks.Create, L("Permission:Tasks.Create"));
+        taskPermission.AddChild(ProjectManagementPermissions.Tasks.Edit, L("Permission:Tasks.Edit"));
+        taskPermission.AddChild(ProjectManagementPermissions.Tasks.Delete, L("Permission:Tasks.Delete"));
     }
 
     private static LocalizableString L(string name)

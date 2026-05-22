@@ -1,0 +1,95 @@
+﻿@page "/Tasks"
+@using ProjectManagement.Localization
+@using ProjectManagement.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@model ProjectManagement.Web.Pages.WorkTasks.IndexModel
+@inject IAuthorizationService AuthorizationService
+@inject IStringLocalizer<ProjectManagementResource> L
+
+@section styles
+{
+	<abp-style src="/Pages/WorkTasks/Index.css" />
+}
+
+@section scripts
+{
+	<abp-script src="/Pages/WorkTasks/Index.js" />
+}
+
+<abp-card class="worktasks-page">
+	<abp-card-header class="worktasks-header">
+		<div class="worktasks-header-left">
+			<abp-card-title>@L["Tasks"]</abp-card-title>
+		</div>
+		<div class="worktasks-header-right">
+			<abp-button id="NewWorkTaskButton"
+						text="@L["New Task"].Value"
+						icon="plus"
+						button-type="Primary" />
+		</div>
+	</abp-card-header>
+	<abp-card-body>
+		<div class="worktasks-searchbar">
+			<div class="worktasks-search input-group rounded overflow-hidden">
+				<input id="WorkTaskSearch"
+					   type="search"
+					   class="form-control border-0"
+					   placeholder="@L["Search"]"
+					   aria-label="@L["Search"]" />
+				<button id="WorkTaskSearchButton" class="btn btn-primary" type="button" aria-label="@L["Search"]">
+					<i class="fa fa-search"></i>
+				</button>
+			</div>
+			<abp-button id="WorkTaskFilterToggle"
+						text="@L["Filters"].Value"
+						button-type="Outline_Primary"
+						icon="chevron-down"
+						class="worktasks-filter-toggle" />
+		</div>
+
+		<div id="WorkTaskFilters" class="worktasks-filters d-none">
+			<abp-row>
+				<abp-column size-md="_3" class="worktasks-filter-group">
+					<label class="worktasks-filter-label">@L["Status"]</label>
+					<select id="WorkTaskFilterStatus" class="form-select worktasks-filter-select"></select>
+				</abp-column>
+				<abp-column size-md="_3" class="worktasks-filter-group">
+					<label class="worktasks-filter-label">@L["Priority"]</label>
+					<select id="WorkTaskFilterPriority" class="form-select worktasks-filter-select"></select>
+				</abp-column>
+				<abp-column size-md="_3" class="worktasks-filter-group">
+					<label class="worktasks-filter-label">@L["Assignee"]</label>
+					<select id="WorkTaskFilterAssignee" class="form-select worktasks-filter-select"></select>
+				</abp-column>
+				<abp-column size-md="_3" class="worktasks-filter-group">
+					<label class="worktasks-filter-label">@L["Project"]</label>
+					<select id="WorkTaskFilterProject" class="form-select worktasks-filter-select"></select>
+				</abp-column>
+			</abp-row>
+		</div>
+
+		<div id="WorkTaskLoading" class="worktasks-state worktasks-loading">
+			<div class="worktasks-skeleton-row"></div>
+			<div class="worktasks-skeleton-row"></div>
+			<div class="worktasks-skeleton-row"></div>
+		</div>
+
+		<div id="WorkTaskEmpty" class="worktasks-state worktasks-empty d-none">
+			<h3>@L["NoTasksFound"]</h3>
+		</div>
+
+		<div id="WorkTaskError" class="worktasks-state worktasks-error d-none">
+			<h3>@L["CouldNotLoadTasks"]</h3>
+			<p id="WorkTaskErrorMessage"></p>
+			<abp-button id="RetryWorkTasksButton"
+						text="@L["Retry"].Value"
+						icon="refresh"
+						button-type="Secondary" />
+		</div>
+
+		<div id="WorkTaskTableWrapper" class="worktasks-table-wrapper d-none">
+			<abp-table striped-rows="true" id="WorkTaskTable" class="worktasks-table"></abp-table>
+		</div>
+	</abp-card-body>
+</abp-card>

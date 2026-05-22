@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectManagement.Statuses;
+using ProjectManagement.TeamMembers;
 using Volo.Abp.Uow;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -41,7 +43,12 @@ public class ProjectManagementEntityFrameworkCoreModule : AbpModule
                 /* Remove "includeAllEntities: true" to create
                  * default repositories only for aggregate roots */
             options.AddDefaultRepositories(includeAllEntities: true);
+            options.AddRepository<TeamMember, EfCoreTeamMemberRepository>();
+            options.AddRepository<Status, EfCoreStatusReporitory>();
         });
+
+        context.Services.AddTransient<ITeamMemberRepository, EfCoreTeamMemberRepository>();
+        context.Services.AddTransient<IStatusRepository, EfCoreStatusReporitory>();
 
         Configure<AbpDbContextOptions>(options =>
         {

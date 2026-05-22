@@ -6,6 +6,7 @@ public class ProjectManagementMenus
     public const string Home = Prefix + ".Home";
     public const string TeamMembers = Prefix + ".TeamMembers";
     public const string Priorities = Prefix + ".Priorites";
+    public const string Tasks = Prefix + ".Tasks";
 
     //Add your menu items here...
 

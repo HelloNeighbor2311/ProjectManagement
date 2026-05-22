@@ -25,7 +25,7 @@ namespace ProjectManagement.TeamMembers
             await teamMemberRepository.DeleteAsync(id);
         }
         [Authorize(ProjectManagementPermissions.TeamMembers.Default)]
-        public async Task<PagedResultDto<TeamMemberDto>> GetListTeamMemberDto(GetTeamMemberListDto input)
+        public async Task<PagedResultDto<TeamMemberDto>> GetListTeamMemberDto(TeamMemberPagedAndSortedResultRequestDto input)
         {
             if (input.Sorting.IsNullOrWhiteSpace())
             {

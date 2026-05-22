@@ -32,4 +32,17 @@ public static class ProjectManagementPermissions
         public const string Edit = GroupName + ".Priorities.Edit";
         public const string Delete = GroupName + ".Priorities.Delete";
     }
+    public static class Statuses
+    {
+        public const string Default = GroupName + ".Statuses";
+        public const string Create = GroupName + ".Statuses.Create";
+        public const string Delete = GroupName + ".Statuses.Delete";
+    }
+    public static class Tasks
+    {
+        public const string Default = GroupName + ".Tasks";
+        public const string Create = GroupName + ".Tasks.Create";
+        public const string Edit = GroupName + ".Tasks.Edit";
+        public const string Delete = GroupName + ".Tasks.Delete";
+    }
 }

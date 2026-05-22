@@ -5,7 +5,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace ProjectManagement.TeamMembers
 {
-    public class GetTeamMemberListDto: PagedAndSortedResultRequestDto
+    public class TeamMemberPagedAndSortedResultRequestDto: PagedAndSortedResultRequestDto
     {
         public string? Filter { get; set; }
     }

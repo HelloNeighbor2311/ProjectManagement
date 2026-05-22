@@ -15,8 +15,16 @@ namespace ProjectManagement.Statuses
             var existedStatus = await _statusRepository.FindStatusByTitleAsync(title);
             if(existedStatus != null)
             {
-
+                throw new StatusAlreadyExistedException(title);      
             }
+            return new Status(GuidGenerator.Create(), title);
+        }
+        public async Task ChangeStatusColorAsync(Status status, string color)
+        {
+            Check.NotNull(status, nameof(status));
+            Check.NotNullOrWhiteSpace(color, nameof(color));
+
+            status.ChangeColor(color);
         }
     }
 }

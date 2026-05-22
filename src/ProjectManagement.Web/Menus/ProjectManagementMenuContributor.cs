@@ -70,6 +70,12 @@ public class ProjectManagementMenuContributor : IMenuContributor
                     l["Menu:Priorities"],
                     url: "/Priorities"
                 ).RequirePermissions(ProjectManagementPermissions.Priorities.Default)
+            ).AddItem(
+                new ApplicationMenuItem(
+                    ProjectManagementMenus.Tasks,
+                    l["Menu:Tasks"],
+                    url: "/Tasks"
+                ).RequirePermissions(ProjectManagementPermissions.Tasks.Default)
             )
         );
         return Task.CompletedTask;

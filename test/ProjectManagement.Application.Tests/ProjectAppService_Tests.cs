@@ -22,7 +22,7 @@ namespace ProjectManagement
         [Fact]
         public async Task Should_Get_List_Projects()
         {
-            var result = await _projectAppService.GetListAsync(new Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto());
+            var result = await _projectAppService.GetListAsync(new ProjectPagedAndSortedResultRequestDto());
             result.TotalCount.ShouldBeGreaterThan(1);
             result.Items.ShouldContain(b => b.Name == "Project 1");
         }

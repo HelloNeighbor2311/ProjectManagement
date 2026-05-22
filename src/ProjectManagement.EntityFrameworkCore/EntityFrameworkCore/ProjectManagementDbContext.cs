@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectManagement.Enums;
+using ProjectManagement.Configurations;
 using ProjectManagement.Priorities;
 using ProjectManagement.Projects;
+using ProjectManagement.Statuses;
 using ProjectManagement.TeamMembers;
-using ProjectManagement.WorkTask;
+using ProjectManagement.WorkTasks;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -35,6 +36,8 @@ public class ProjectManagementDbContext :
     public DbSet<Project> Projects { get; set; }
     public DbSet<TeamMember> TeamMembers { get; set; }
     public DbSet<Priority> Priorities { get; set; }
+    public DbSet<Status> Statuses { get; set; }
+    public DbSet<WorkTask> WorkTasks { get; set; }
     #region Entities from the modules
 
     /* Notice: We only implemented IIdentityDbContext and ITenantManagementDbContext
@@ -129,5 +132,12 @@ public class ProjectManagementDbContext :
             b.ConfigureByConvention();
             b.Property(x => x.Title).IsRequired();
         });
+        builder.Entity<Status>(b =>
+        {
+            b.ToTable(ProjectManagementConsts.DbTablePrefix + "Statuses", ProjectManagementConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.Title).IsRequired();
+        });
+        builder.ApplyConfiguration(new WorkTaskConfiguration());
     }
 }

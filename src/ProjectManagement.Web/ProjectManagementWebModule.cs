@@ -121,6 +121,8 @@ public class ProjectManagementWebModule : AbpModule
             options.Conventions.AuthorizePage("/Priorities/Index", ProjectManagementPermissions.Priorities.Default);
             options.Conventions.AuthorizePage("/Priorities/CreateModal", ProjectManagementPermissions.Priorities.Create);
             options.Conventions.AuthorizePage("/Priorities/EditModal", ProjectManagementPermissions.Priorities.Edit);
+            options.Conventions.AuthorizePage("/WorkTasks/Index", ProjectManagementPermissions.Tasks.Default);
+            options.Conventions.AuthorizePage("/WorkTasks/CreateModal", ProjectManagementPermissions.Tasks.Create);
         });
 
         context.Services.AddMapperlyObjectMapper<ProjectManagementWebModule>();
