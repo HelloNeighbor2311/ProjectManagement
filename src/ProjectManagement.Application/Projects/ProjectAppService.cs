@@ -43,7 +43,6 @@ namespace ProjectManagement.Projects
         {
             await CheckGetPolicyAsync();
 
-            // Chiến lược read-through: thử Redis trước, nếu miss thì đọc DB rồi ghi lại vào cache.
             var cacheKey = await BuildProjectByIdCacheKeyAsync(id);
             var cachedItem = await GetCachedProjectAsync(cacheKey);
             if (cachedItem != null)
@@ -62,7 +61,6 @@ namespace ProjectManagement.Projects
 
             input ??= new ProjectPagedAndSortedResultRequestDto();
 
-            // Cache cả truy vấn danh sách vì trang Projects thường gọi lặp lại cùng bộ lọc/sort.
             var cacheKey = await BuildProjectListCacheKeyAsync(input);
             var cachedResult = await GetCachedProjectListAsync(cacheKey);
             if (cachedResult != null)
@@ -72,7 +70,6 @@ namespace ProjectManagement.Projects
 
             var query = await Repository.GetQueryableAsync();
 
-            // FE gửi `filter`; BE sẽ trim và tìm theo keyword trên Name/Description.
             var filter = input.Filter?.Trim();
             if (!string.IsNullOrWhiteSpace(filter))
             {
@@ -82,7 +79,6 @@ namespace ProjectManagement.Projects
                 );
             }
 
-            // Giữ nguyên flow paging/sorting của ABP sau khi đã lọc dữ liệu.
             var totalCount = await AsyncExecuter.CountAsync(query);
 
             query = ApplySorting(query, input);
@@ -109,7 +105,6 @@ namespace ProjectManagement.Projects
         public override async Task<ProjectDto> UpdateAsync(Guid id, CreateUpdateProjectDto input)
         {
             var result = await base.UpdateAsync(id, input);
-            // Update sẽ làm invalid cả cache chi tiết lẫn cache danh sách.
             await InvalidateProjectCachesAsync();
             _logger.LogInformation("Updated project {ProjectId} to name {ProjectName}", result.Id, result.Name);
             return result;
@@ -120,7 +115,6 @@ namespace ProjectManagement.Projects
         {
             var project = await Repository.GetAsync(id);
             await base.DeleteAsync(id);
-            // Delete cũng đổi version key để các giá trị cũ bị xem là không hợp lệ.
             await InvalidateProjectCachesAsync();
             _logger.LogInformation("Deleted project {ProjectId} named {ProjectName}", project.Id, project.Name);
         }
