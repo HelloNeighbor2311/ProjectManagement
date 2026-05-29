@@ -38,6 +38,7 @@ public class ProjectManagementPermissionDefinitionProvider : PermissionDefinitio
         //Status permission
         var statusPermission = projectManagementGroup.AddPermission(ProjectManagementPermissions.Statuses.Default, L("Permission:Statuses"));
         statusPermission.AddChild(ProjectManagementPermissions.Statuses.Create, L("Permission:Statuses.Create"));
+        statusPermission.AddChild(ProjectManagementPermissions.Statuses.Edit, L("Permission:Statuses.Edit"));
         statusPermission.AddChild(ProjectManagementPermissions.Statuses.Delete, L("Permission:Statuses.Delete"));
         
         //Tasks permission

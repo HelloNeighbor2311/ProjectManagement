@@ -1,0 +1,94 @@
+@page
+@using ProjectManagement.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using ProjectManagement.Permissions
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model ProjectManagement.Web.Pages.WorkTasks.DetailModalModel
+@inject IStringLocalizer<ProjectManagementResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    Layout = null;
+    var canEditTask = await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Tasks.Edit);
+}
+
+<abp-style src="/Pages/WorkTasks/DetailModal.css" />
+
+<abp-modal id="WorkTaskDetailModal" centered="true" size="Large">
+    <abp-modal-header title="@Model.WorkTask.Title"></abp-modal-header>
+    <abp-modal-body>
+        <div class="task-detail-shell">
+            <div class="task-detail-hero">
+                <div class="task-detail-hero__title">@Model.WorkTask.Title</div>
+            </div>
+
+            <div class="task-detail-grid">
+                <div class="task-detail-item">
+                    <div class="task-detail-label">@L["Assignee"]</div>
+                    <div class="task-detail-value task-detail-assignee">
+                        <span class="task-detail-avatar">@(
+                            string.IsNullOrWhiteSpace(Model.WorkTask.AssigneeName)
+                                ? "--"
+                                : Model.WorkTask.AssigneeName.Substring(0, Math.Min(2, Model.WorkTask.AssigneeName.Length)).ToUpper()
+                        )</span>
+                        <span>@(string.IsNullOrWhiteSpace(Model.WorkTask.AssigneeName) ? "-" : Model.WorkTask.AssigneeName)</span>
+                    </div>
+                </div>
+
+                <div class="task-detail-item">
+                    <div class="task-detail-label">@L["Status"].Value</div>
+                    <div class="task-detail-value">
+                        <span class="task-detail-pill status-pill">@Model.WorkTask.StatusName</span>
+                    </div>
+                </div>
+
+                <div class="task-detail-item">
+                    <div class="task-detail-label">@L["Priority"].Value</div>
+                    <div class="task-detail-value">
+                        <span class="task-detail-pill priority-pill">@Model.WorkTask.PriorityName</span>
+                    </div>
+                </div>
+
+                <div class="task-detail-item">
+                    <div class="task-detail-label">@L["StartDate"].Value</div>
+                    <div class="task-detail-value">@Model.WorkTask.StartedDate.ToString("MMM dd, yyyy")</div>
+                </div>
+
+                <div class="task-detail-item">
+                    <div class="task-detail-label">@L["EndDate"].Value</div>
+                    <div class="task-detail-value">@Model.WorkTask.EndedDate.ToString("MMM dd, yyyy")</div>
+                </div>
+
+            </div>
+        </div>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Cancel)">
+        @if (canEditTask)
+        {
+            <abp-button id="EditFromDetailButton" text="@L["Edit"].Value" button-type="Primary" icon="pen" />
+        }
+    </abp-modal-footer>
+</abp-modal>
+
+<script>
+$(function () {
+    var modal = $('#WorkTaskDetailModal');
+    var editTaskModal = new abp.ModalManager(abp.appPath + 'WorkTasks/EditModal');
+    var canEditTask = @canEditTask.ToString().ToLowerInvariant();
+
+    modal.on('shown.bs.modal', function () {
+        var editBtn = $('#EditFromDetailButton');
+
+        if (!canEditTask || !editBtn.length) {
+            return;
+        }
+
+        editBtn.off('click').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            editTaskModal.open({ id: '@Model.WorkTask.Id' });
+            modal.modal('hide');
+        });
+    });
+});
+</script>

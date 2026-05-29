@@ -10,6 +10,7 @@ namespace ProjectManagement.Statuses
     public interface IStatusRepository: IRepository<Status, Guid>
     {
         Task<Status> FindStatusByTitleAsync(string title);
-        Task<List<Status>> GetListStatusAsync(int skipCount, int MaxResultCount, string sorting, string filter = null);
+        Task<Status?> GetFirstStatusAsync(Guid? excludedStatusId = null);
+        Task<List<Status>> GetListStatusAsync(int skipCount, int MaxResultCount, string sorting, string? filter = null);
     }
 }

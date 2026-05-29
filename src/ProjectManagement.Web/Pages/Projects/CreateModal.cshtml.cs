@@ -33,8 +33,8 @@ namespace ProjectManagement.Web.Pages.Projects
                 return BadRequest(ModelState);
             }
 
-            await _projectAppService.CreateAsync(Project);
-            return NoContent();
+            var createdProject = await _projectAppService.CreateAsync(Project);
+            return new JsonResult(createdProject);
         }
     }
 }

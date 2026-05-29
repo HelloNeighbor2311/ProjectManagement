@@ -11,6 +11,9 @@ $(function () {
         abp.appPath + 'TeamMembers/CreateModal',
     );
     var editModal = new abp.ModalManager(abp.appPath + 'TeamMembers/EditModal');
+    var detailModal = new abp.ModalManager(
+        abp.appPath + 'TeamMembers/DetailModal',
+    );
 
     createModal.onResult(function () {
         loadTeamMembers();
@@ -184,7 +187,7 @@ $(function () {
         })
             .text(l('Details'))
             .on('click', function () {
-                return;
+                detailModal.open({ id: item.id });
             });
 
         $capacityRow.append(

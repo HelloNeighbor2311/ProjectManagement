@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
+using Volo.Abp.Auditing;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI;
@@ -42,6 +43,7 @@ using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.Caching.StackExchangeRedis;
 
 namespace ProjectManagement.Web;
 
@@ -56,7 +58,8 @@ namespace ProjectManagement.Web;
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpTenantManagementWebModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpSwashbuckleModule)
+    typeof(AbpSwashbuckleModule),
+    typeof(AbpCachingStackExchangeRedisModule)
     )]
 public class ProjectManagementWebModule : AbpModule
 {
@@ -106,6 +109,11 @@ public class ProjectManagementWebModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
+        Configure<AbpAuditingOptions>(options =>
+        {
+            options.EntityHistorySelectors.AddAllEntities();
+        });
+
         ConfigureAuthentication(context);
         ConfigureUrls(configuration);
         ConfigureBundles();
@@ -115,6 +123,9 @@ public class ProjectManagementWebModule : AbpModule
         ConfigureSwaggerServices(context.Services);
         Configure<RazorPagesOptions>(options =>
         {
+            options.Conventions.AuthorizePage("/Boards/Index", ProjectManagementPermissions.Tasks.Default);
+            options.Conventions.AuthorizePage("/Statuses/CreateModal", ProjectManagementPermissions.Statuses.Create);
+            options.Conventions.AuthorizePage("/Statuses/EditModal", ProjectManagementPermissions.Statuses.Edit);
             options.Conventions.AuthorizePage("/Projects/Index", ProjectManagementPermissions.Projects.Default);
             options.Conventions.AuthorizePage("/Projects/CreateModal", ProjectManagementPermissions.Projects.Create);
             options.Conventions.AuthorizePage("/Projects/EditModal", ProjectManagementPermissions.Projects.Edit);

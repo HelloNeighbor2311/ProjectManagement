@@ -1,0 +1,103 @@
+@page
+@using ProjectManagement.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using ProjectManagement.Permissions
+@model ProjectManagement.Web.Pages.Boards.IndexModel
+@inject IAuthorizationService AuthorizationService
+@inject IStringLocalizer<ProjectManagementResource> L
+
+@section styles {
+    <abp-style src="/Pages/Boards/Index.css" />
+}
+
+@section scripts {
+    <script>
+        window.projectManagementBoardPermissions = {
+            canCreateProject: @((await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Projects.Create)).ToString().ToLowerInvariant()),
+            canCreateStatus: @((await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Statuses.Create)).ToString().ToLowerInvariant()),
+            canEditStatus: @((await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Statuses.Edit)).ToString().ToLowerInvariant()),
+            canDeleteStatus: @((await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Statuses.Delete)).ToString().ToLowerInvariant()),
+            canCreateTask: @((await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Tasks.Create)).ToString().ToLowerInvariant())
+        };
+    </script>
+    <abp-script src="/Pages/Boards/Index.js" />
+}
+
+<div class="board-page-wrap">
+<div class="board-page">
+    <div class="board-hero">
+        <div class="board-toolbar">
+            <div class="board-heading">
+                <div class="board-title">
+                    <div class="dropdown board-title__switcher">
+                        <button class="board-title__button dropdown-toggle" type="button" id="BoardProjectSwitcher" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="board-title__name" id="BoardProjectTitle">@L["Board"].Value</span>
+                        </button>
+                        <div class="dropdown-menu board-project-menu" id="BoardProjectMenu" aria-labelledby="BoardProjectSwitcher"></div>
+                    </div>
+                    <div class="board-title__subtitle">
+                        <span class="board-title__bullet"></span>
+                        <span id="BoardProjectDescription">@L["BoardSubtitle"].Value</span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap justify-content-end board-actions">
+                @{ var canCreateProject = await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Projects.Create); }
+                <abp-button id="AddBoardButton"
+                            text="@L["AddBoard"].Value"
+                            icon="plus"
+                            button-type="Secondary"
+                            disabled="@(!canCreateProject)"
+                            class="board-action-button @(canCreateProject ? string.Empty : "board-action-button--disabled")" />
+
+                @{ var canCreateStatus = await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Statuses.Create); }
+                <abp-button id="AddColumnButton"
+                            text="@L["AddColumn"].Value"
+                            icon="plus"
+                            button-type="Primary"
+                            disabled="@(!canCreateStatus)"
+                            class="board-action-button @(canCreateStatus ? string.Empty : "board-action-button--disabled")" />
+
+                @{ var canCreateTask = await AuthorizationService.IsGrantedAsync(ProjectManagementPermissions.Tasks.Create); }
+                <abp-button id="AddTaskButton"
+                            text="@L["AddTask"].Value"
+                            icon="plus"
+                            button-type="Primary"
+                            disabled="@(!canCreateTask)"
+                            class="board-action-button @(canCreateTask ? string.Empty : "board-action-button--disabled")" />
+            </div>
+        </div>
+
+        <div class="board-hero__meta">
+            <span class="board-chip" id="BoardProjectCount">0 @L["Project"].Value</span>
+            <span class="board-chip" id="BoardTaskCount">0 @L["Tasks"].Value</span>
+            <span class="board-chip" id="BoardStatusCount">0 @L["Status"].Value</span>
+        </div>
+    </div>
+
+    <div class="board-section">
+        <div class="board-section__body">
+            <div class="board-section__header">
+                <div class="board-section__title">
+                    <span class="board-section__icon"><i class="fa fa-columns"></i></span>
+                    <span>@L["Board"].Value</span>
+                </div>
+            </div>
+
+            <div class="text-muted small mb-3">@L["BoardSubtitle"].Value</div>
+
+            <div id="BoardLoading" class="alert alert-info">Loading board...</div>
+            <div id="BoardEmptyProjects" class="board-empty d-none mb-3">
+                <div class="fw-semibold mb-1">@L["NoProjectsFound"].Value</div>
+                <div>@L["NoProjectsFoundDescription"].Value</div>
+            </div>
+            <div id="BoardEmptyTasks" class="board-empty d-none mb-3">
+                <div class="fw-semibold mb-1">@L["NoTasksForProject"].Value</div>
+                <div>Use <strong>@L["AddTask"].Value</strong> to create the first task for this project.</div>
+            </div>
+            <div id="BoardColumns" class="board-columns d-none"></div>
+        </div>
+    </div>
+</div>
+</div>

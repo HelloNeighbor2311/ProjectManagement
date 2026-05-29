@@ -1,0 +1,85 @@
+@page
+@using Microsoft.Extensions.Localization
+@using ProjectManagement.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model ProjectManagement.Web.Pages.TeamMembers.DetailModalModel
+@inject IStringLocalizer<ProjectManagementResource> L
+@{
+    Layout = null;
+    var taskCount = Model.WorkTasks.Count;
+    var parts = Model.TeamMember.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    var initials = string.Empty;
+
+    for (var i = 0; i < parts.Length && i < 2; i++)
+    {
+        initials += parts[i].Substring(0, 1).ToUpperInvariant();
+    }
+
+    if (string.IsNullOrWhiteSpace(initials))
+    {
+        initials = "TM";
+    }
+}
+
+<abp-style src="/Pages/TeamMembers/DetailModal.css" />
+
+<abp-modal id="TeamMemberDetailModal" centered="true" size="Large">
+    <abp-modal-header title="@Model.TeamMember.Name"> - Tasks</abp-modal-header>
+    <abp-modal-body>
+        <div class="team-member-detail-shell">
+            <div class="team-member-detail-hero">
+                <div class="team-member-detail-identity">
+                    <div class="team-member-detail-avatar">@initials</div>
+                    <div class="team-member-detail-copy">
+                        <div class="team-member-detail-name">@Model.TeamMember.Name</div>
+                        <div class="team-member-detail-role">@Model.TeamMember.Role</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-member-detail-section-header">
+                <div>
+                    <div class="team-member-detail-section-title">@L["AssignedTasks"]</div>
+                    <div class="team-member-detail-section-subtitle">@L["AssignedTasksSubtitle"]</div>
+                </div>
+                <div class="team-member-detail-count">@taskCount</div>
+            </div>
+
+            @if (taskCount > 0)
+            {
+                <div class="team-member-task-list">
+                    @foreach (var task in Model.WorkTasks)
+                    {
+                        var statusClass = string.Equals(task.StatusName, "Done", StringComparison.OrdinalIgnoreCase)
+                            ? "team-member-task-status team-member-task-status--done"
+                            : "team-member-task-status";
+
+                        <article class="team-member-task-card">
+                            <div class="team-member-task-card__top">
+                                <div class="team-member-task-project">@task.ProjectName</div>
+                                <div class="@statusClass">@task.StatusName</div>
+                            </div>
+
+                            <div class="team-member-task-title">@task.Title</div>
+
+                            <div class="team-member-task-dates">
+                                <span><i class="fa fa-calendar-alt me-1"></i>@task.StartedDate.ToString("MMM d")</span>
+                                <span class="team-member-task-dates__separator">-</span>
+                                <span><i class="fa fa-calendar-check me-1"></i>@task.EndedDate.ToString("MMM d")</span>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="team-member-task-empty">
+                    <div class="team-member-task-empty__icon">🗂</div>
+                    <h3>@L["NoTasksAssigned"]</h3>
+                    <p>@L["NoTasksAssignedDescription"]</p>
+                </div>
+            }
+        </div>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Cancel)"></abp-modal-footer>
+</abp-modal>

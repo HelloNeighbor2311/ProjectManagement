@@ -26,5 +26,19 @@ namespace ProjectManagement.Statuses
 
             status.ChangeColor(color);
         }
+
+        public async Task ChangeStatusTitleAsync(Status status, string title)
+        {
+            Check.NotNull(status, nameof(status));
+            Check.NotNullOrWhiteSpace(title, nameof(title));
+
+            var existedStatus = await _statusRepository.FindStatusByTitleAsync(title);
+            if (existedStatus != null && existedStatus.Id != status.Id)
+            {
+                throw new StatusAlreadyExistedException(title);
+            }
+
+            status.ChangeTitle(title);
+        }
     }
 }

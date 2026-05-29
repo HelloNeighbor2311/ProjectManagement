@@ -1,0 +1,70 @@
+@page
+@using ProjectManagement.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model ProjectManagement.Web.Pages.Statuses.CreateModalModel
+@inject IStringLocalizer<ProjectManagementResource> L
+@{
+    Layout = null;
+}
+
+<abp-modal id="CreateStatusModal" centered="true">
+    <abp-modal-header title="@L["AddColumn"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <form id="CreateStatusForm" method="post" asp-page="/Statuses/CreateModal">
+            <div class="mb-3">
+                <label for="Status_Title" class="form-label">@L["Title"]</label>
+                <input type="text" class="form-control" id="Status_Title" name="Status.Title" value="@Model.Status.Title" required>
+            </div>
+        </form>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>
+</abp-modal>
+
+<script>
+$(function () {
+    var modal = $('#CreateStatusModal');
+    var form = $('#CreateStatusForm');
+
+    modal.on('shown.bs.modal', function () {
+        var saveBtn = modal.find('.modal-footer .btn-primary:last');
+
+        if (!saveBtn.length) {
+            return;
+        }
+
+        saveBtn.off('click').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!form[0].checkValidity()) {
+                form.addClass('was-validated');
+                return;
+            }
+
+            var formData = new FormData(form[0]);
+
+            $.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
+            })
+                .done(function () {
+                    form[0].reset();
+                    form.removeClass('was-validated');
+                    modal.modal('hide');
+                    document.dispatchEvent(new CustomEvent('statusCreated'));
+                })
+                .fail(function (xhr) {
+                    var errorMsg = 'Error creating status!';
+                    if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.message) {
+                        errorMsg = xhr.responseJSON.error.message;
+                    }
+                    abp.notify.error(errorMsg);
+                });
+        });
+    });
+});
+</script>

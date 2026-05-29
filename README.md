@@ -2,18 +2,18 @@
 
 ## About this solution
 
-This is a layered startup solution based on [Domain Driven Design (DDD)](https://abp.io/docs/latest/framework/architecture/domain-driven-design) practises. All the fundamental ABP modules are already installed. 
+This is a layered startup solution based on [Domain Driven Design (DDD)](https://abp.io/docs/latest/framework/architecture/domain-driven-design) practises. All the fundamental ABP modules are already installed.
 
 ### Pre-requirements
 
-* [.NET 10.0+ SDK](https://dotnet.microsoft.com/download/dotnet)
-* [Node v20.11+](https://nodejs.org/en)
+- [.NET 10.0+ SDK](https://dotnet.microsoft.com/download/dotnet)
+- [Node v20.11+](https://nodejs.org/en)
 
 ### Configurations
 
 The solution comes with a default configuration that works out of the box. However, you may consider to change the following configuration before running your solution:
 
-* Check the `ConnectionStrings` in `appsettings.json` files under the `ProjectManagement.Web` and `ProjectManagement.DbMigrator` projects and change it if you need.
+- Check the `ConnectionStrings` in `appsettings.json` files under the `ProjectManagement.Web` and `ProjectManagement.DbMigrator` projects and change it if you need.
 
 ### Before running the application
 
@@ -53,8 +53,8 @@ Run `ProjectManagement.DbMigrator` to create the initial database. This should b
 
 This is a layered monolith application that consists of the following applications:
 
-* `ProjectManagement.DbMigrator`: A console application which applies the migrations and also seeds the initial data. It is useful on development as well as on production environment.
-* `ProjectManagement.Web`: ASP.NET Core MVC / Razor Pages application that is the essential web application of the solution.
+- `ProjectManagement.DbMigrator`: A console application which applies the migrations and also seeds the initial data. It is useful on development as well as on production environment.
+- `ProjectManagement.Web`: ASP.NET Core MVC / Razor Pages application that is the essential web application of the solution.
 
 ### Deploying the application
 
@@ -64,7 +64,8 @@ Deploying an ABP application is not different than deploying any .NET or ASP.NET
 
 You can see the following resources to learn more about your solution and the ABP Framework:
 
-* [Web Application Development Tutorial](https://abp.io/docs/latest/tutorials/book-store/part-01?UI=Blazor&DB=EF)
-* [Application Startup Template Structure](https://abp.io/docs/latest/solution-templates/layered-web-application)
-* [LeptonX Lite MVC UI](https://abp.io/docs/latest/ui-themes/lepton-x-lite/asp-net-core)
+- [Web Application Development Tutorial](https://abp.io/docs/latest/tutorials/book-store/part-01?UI=Blazor&DB=EF)
+- [Application Startup Template Structure](https://abp.io/docs/latest/solution-templates/layered-web-application)
+- [LeptonX Lite MVC UI](https://abp.io/docs/latest/ui-themes/lepton-x-lite/asp-net-core)
+
 # ProjectManagement

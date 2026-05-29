@@ -36,14 +36,7 @@ public class ProjectManagementMenuContributor : IMenuContributor
             )
         );
 
-        if (MultiTenancyConsts.IsEnabled)
-        {
-            administration.SetSubItemOrder(TenantManagementMenuNames.GroupName, 1);
-        }
-        else
-        {
-            administration.TryRemoveMenuItem(TenantManagementMenuNames.GroupName);
-        }
+        administration.SetSubItemOrder(TenantManagementMenuNames.GroupName, 1);
 
         administration.SetSubItemOrder(IdentityMenuNames.GroupName, 2);
         administration.SetSubItemOrder(SettingManagementMenuNames.GroupName, 3);
@@ -52,6 +45,12 @@ public class ProjectManagementMenuContributor : IMenuContributor
                 "Project",
                 l["Menu:ProjectManagement"],
                 icon: "fa fa-book"
+            ).AddItem(
+                new ApplicationMenuItem(
+                    ProjectManagementMenus.Board,
+                    l["Menu:Board"],
+                    url: "/Boards"
+                )
             ).AddItem(
                 new ApplicationMenuItem(
                     "Project.Project",

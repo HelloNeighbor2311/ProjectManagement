@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ProjectManagement.Permissions;
 using ProjectManagement.Priorities;
 using ProjectManagement.Projects;
 using ProjectManagement.Statuses;
@@ -13,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace ProjectManagement.Web.Pages.WorkTasks
 {
+    [Authorize(ProjectManagementPermissions.Tasks.Edit)]
     public class EditModalModel : ProjectManagementPageModel
     {
         public List<SelectListItem> Projects { get; set; } = new();

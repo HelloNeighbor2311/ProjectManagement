@@ -14,6 +14,7 @@ namespace ProjectManagement.WorkTasks
         [MapProperty(nameof(WorkTask.PriorityId), nameof(WorkTaskDetailDto.PriorityId))]
         [MapProperty(nameof(WorkTask.AssigneeId), nameof(WorkTaskDetailDto.AssigneeId))]
         public partial WorkTaskDetailDto ToDetailDto(WorkTask entity);
+        public partial WorkTaskShortDetailDto ToShortDetailDto(WorkTask entity);
 
         public WorkTaskDetailDto MapWithDates(WorkTask workTask)
         {
@@ -33,6 +34,16 @@ namespace ProjectManagement.WorkTasks
             dto.ProjectName = projectName;
             dto.PriorityName = priorityName;
             dto.AssigneeName = assigneeName ?? string.Empty;
+            return dto;
+        }
+        public WorkTaskShortDetailDto ToShortDetailDtoWithNames(WorkTask workTask, string projectName, string statusName)
+        {
+            var dto = ToShortDetailDto(workTask);
+            // Map date/time fields from entity to DTO so list endpoints include them
+            dto.StartedDate = workTask.StartedTime;
+            dto.EndedDate = workTask.EndedTime;
+            dto.StatusName = statusName;
+            dto.ProjectName = projectName;
             return dto;
         }
     }

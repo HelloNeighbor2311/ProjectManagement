@@ -119,6 +119,19 @@
     font-size: 0.85rem;
 }
 
+.worktasks-table .dropdown-item.disabled,
+.worktasks-table .dropdown-item:disabled {
+    color: #c4cbd6;
+    pointer-events: none;
+    background: transparent;
+    opacity: 0.75;
+}
+
+.worktasks-table .dropdown-item.disabled i,
+.worktasks-table .dropdown-item:disabled i {
+    color: #c4cbd6;
+}
+
 .worktasks-badge {
     display: inline-flex;
     align-items: center;

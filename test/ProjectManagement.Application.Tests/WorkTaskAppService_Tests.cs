@@ -75,5 +75,23 @@ namespace ProjectManagement
             stored.ShouldNotBeNull();
             stored!.ProjectId.ShouldBe(project.Id);
         }
+
+        [Fact]
+        public async Task Should_Get_WorkTasks_By_TeamMember()
+        {
+            var assignee = (await _teamMemberRepository.GetListAsync())
+                .FirstOrDefault(member => member.Name == "Richard Olstand");
+
+            assignee.ShouldNotBeNull();
+
+            var result = await _workTaskAppService.GetListWorkTaskByTeamMemberAsync(assignee!.Id);
+
+            result.ShouldNotBeEmpty();
+            result.ShouldAllBe(task => task.AssigneeId == assignee.Id);
+            result.ShouldContain(task => task.Title == "Design UI Layout");
+            result.ShouldContain(task => task.Title == "Create App Navigation");
+            result.ShouldAllBe(task => !string.IsNullOrWhiteSpace(task.ProjectName));
+            result.ShouldAllBe(task => !string.IsNullOrWhiteSpace(task.StatusName));
+        }
     }
 }

@@ -23,7 +23,7 @@
                     <select class="form-select" id="WorkTask_ProjectId" name="WorkTask.ProjectId" required>
                         @foreach (var item in Model.Projects)
                         {
-                            <option value="@item.Value">@item.Text</option>
+                            <option value="@item.Value" selected="@(item.Value == Model.WorkTask.ProjectId.ToString())">@item.Text</option>
                         }
                     </select>
                 </div>

@@ -1,6 +1,13 @@
 $(function () {
     var l = abp.localization.getResource('ProjectManagement');
     var listUrl = abp.appPath + 'api/app/work-task/work-task';
+    var projectApi = abp.appPath + 'api/app/project';
+    var statusApi = abp.appPath + 'api/app/status/status';
+    var priorityApi = abp.appPath + 'api/app/priority';
+    var teamMemberApi = abp.appPath + 'api/app/team-member/team-member-dto';
+    var permissions = window.projectManagementWorkTaskPermissions || {};
+    var canEditWorkTask = permissions.canEdit === true;
+    var canDeleteWorkTask = permissions.canDelete === true;
 
     var $loading = $('#WorkTaskLoading');
     var $empty = $('#WorkTaskEmpty');
@@ -23,15 +30,69 @@ $(function () {
         viewUrl: abp.appPath + 'WorkTasks/EditModal',
     });
 
-    var allTasks = [];
     var dataTable = $('#WorkTaskTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({
-            serverSide: false,
+            serverSide: true,
             paging: true,
             searching: false,
-            processing: false,
+            processing: true,
             order: [[1, 'asc']],
-            data: [],
+            ajax: function (data, callback) {
+                setState('loading');
+
+                abp.ajax({
+                    type: 'GET',
+                    url: listUrl,
+                    data: {
+                        skipCount: data.start,
+                        maxResultCount: data.length,
+                        sorting: getSortingExpression(data),
+                        filter: ($search.val() || '').trim(),
+                        projectId: $filterProject.val() || null,
+                        statusId: $filterStatus.val() || null,
+                        priorityId: $filterPriority.val() || null,
+                        assigneeId: $filterAssignee.val() || null,
+                    },
+                })
+                    .done(function (response) {
+                        var items =
+                            response && Array.isArray(response.items)
+                                ? response.items
+                                : [];
+                        var totalCount =
+                            response && typeof response.totalCount === 'number'
+                                ? response.totalCount
+                                : items.length;
+
+                        callback({
+                            draw: data.draw,
+                            recordsTotal: totalCount,
+                            recordsFiltered: totalCount,
+                            data: items,
+                        });
+
+                        setState(items.length ? 'content' : 'empty');
+                    })
+                    .fail(function (error) {
+                        var message =
+                            error &&
+                            error.responseJSON &&
+                            error.responseJSON.error &&
+                            error.responseJSON.error.message
+                                ? error.responseJSON.error.message
+                                : l('CouldNotLoadTasks');
+
+                        $errorMessage.text(message);
+                        setState('error');
+
+                        callback({
+                            draw: data.draw,
+                            recordsTotal: 0,
+                            recordsFiltered: 0,
+                            data: [],
+                        });
+                    });
+            },
             columnDefs: [
                 {
                     title: l('Actions'),
@@ -39,6 +100,13 @@ $(function () {
                     width: '120px',
                     orderable: false,
                     render: function (data, type, row) {
+                        var editDisabled = canEditWorkTask ? '' : ' disabled';
+                        var deleteDisabled = canDeleteWorkTask
+                            ? ''
+                            : ' disabled';
+                        var editAria = canEditWorkTask ? 'false' : 'true';
+                        var deleteAria = canDeleteWorkTask ? 'false' : 'true';
+
                         return (
                             '<div class="dropdown">' +
                             '<button class="worktasks-action-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
@@ -49,20 +117,28 @@ $(function () {
                             '</button>' +
                             '<ul class="dropdown-menu dropdown-menu-end">' +
                             '<li>' +
-                            '<a href="#" class="dropdown-item worktasks-edit-action" data-id="' +
+                            '<button type="button" class="dropdown-item worktasks-edit-action' +
+                            editDisabled +
+                            '" data-id="' +
                             row.id +
+                            '" aria-disabled="' +
+                            editAria +
                             '">' +
                             '<i class="fa fa-pencil-alt me-2"></i>' +
                             l('Edit') +
-                            '</a>' +
+                            '</button>' +
                             '</li>' +
                             '<li>' +
-                            '<a href="#" class="dropdown-item worktasks-delete-action text-danger" data-id="' +
+                            '<button type="button" class="dropdown-item worktasks-delete-action text-danger' +
+                            deleteDisabled +
+                            '" data-id="' +
                             row.id +
+                            '" aria-disabled="' +
+                            deleteAria +
                             '">' +
                             '<i class="fa fa-trash-alt me-2"></i>' +
                             l('Delete') +
-                            '</a>' +
+                            '</button>' +
                             '</li>' +
                             '</ul>' +
                             '</div>'
@@ -120,6 +196,8 @@ $(function () {
         }),
     );
 
+    loadFilterOptions();
+
     $filterToggle.on('click', function () {
         var isOpen = !$filters.hasClass('d-none');
         $filters.toggleClass('d-none', isOpen);
@@ -131,28 +209,36 @@ $(function () {
 
     $('#RetryWorkTasksButton').on('click', function (e) {
         e.preventDefault();
-        loadTasks();
+        dataTable.ajax.reload();
     });
 
     $searchButton.on('click', function () {
-        renderTasks();
+        dataTable.ajax.reload();
     });
 
     $search.on('keydown', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            renderTasks();
+            dataTable.ajax.reload();
         }
     });
 
     $search.on('input search', function () {
-        renderTasks();
+        dataTable.ajax.reload();
     });
 
-    $filterStatus.on('change', renderTasks);
-    $filterPriority.on('change', renderTasks);
-    $filterAssignee.on('change', renderTasks);
-    $filterProject.on('change', renderTasks);
+    $filterStatus.on('change', function () {
+        dataTable.ajax.reload();
+    });
+    $filterPriority.on('change', function () {
+        dataTable.ajax.reload();
+    });
+    $filterAssignee.on('change', function () {
+        dataTable.ajax.reload();
+    });
+    $filterProject.on('change', function () {
+        dataTable.ajax.reload();
+    });
 
     $('#NewWorkTaskButton').on('click', function (e) {
         e.preventDefault();
@@ -160,15 +246,19 @@ $(function () {
     });
 
     document.addEventListener('workTaskCreated', function () {
-        loadTasks();
+        dataTable.ajax.reload();
     });
 
     document.addEventListener('workTaskUpdated', function () {
-        loadTasks();
+        dataTable.ajax.reload();
     });
 
     $('#WorkTaskTable').on('click', '.worktasks-edit-action', function (e) {
         e.preventDefault();
+        if (!canEditWorkTask || $(this).hasClass('disabled')) {
+            return;
+        }
+
         var id = $(this).data('id');
         if (!id) {
             return;
@@ -180,6 +270,10 @@ $(function () {
     // Delete handler
     $('#WorkTaskTable').on('click', '.worktasks-delete-action', function (e) {
         e.preventDefault();
+        if (!canDeleteWorkTask || $(this).hasClass('disabled')) {
+            return;
+        }
+
         var id = $(this).data('id');
         if (!id) {
             return;
@@ -199,11 +293,7 @@ $(function () {
                 })
                     .done(function () {
                         abp.notify.info(l('SuccessfullyDeleted'));
-                        // remove from local list and re-render
-                        allTasks = allTasks.filter(function (t) {
-                            return t.id !== id;
-                        });
-                        renderTasks();
+                        dataTable.ajax.reload(null, false);
                     })
                     .fail(function (error) {
                         var message =
@@ -219,34 +309,6 @@ $(function () {
         );
     });
 
-    loadTasks();
-
-    function loadTasks() {
-        setState('loading');
-
-        abp.ajax({
-            type: 'GET',
-            url: listUrl,
-        })
-            .done(function (response) {
-                allTasks = Array.isArray(response) ? response : [];
-                buildFilterOptions(allTasks);
-                renderTasks();
-            })
-            .fail(function (error) {
-                var message =
-                    error &&
-                    error.responseJSON &&
-                    error.responseJSON.error &&
-                    error.responseJSON.error.message
-                        ? error.responseJSON.error.message
-                        : l('CouldNotLoadTasks');
-
-                $errorMessage.text(message);
-                setState('error');
-            });
-    }
-
     function setState(state) {
         $loading.toggleClass('d-none', state !== 'loading');
         $empty.toggleClass('d-none', state !== 'empty');
@@ -254,114 +316,112 @@ $(function () {
         $tableWrapper.toggleClass('d-none', state !== 'content');
     }
 
-    function renderTasks() {
-        var filtered = applyFilters(allTasks);
+    function loadFilterOptions() {
+        $.when(
+            loadLookupOptions(projectApi, 'name'),
+            loadLookupOptions(statusApi, 'title'),
+            loadLookupOptions(priorityApi, 'title'),
+            loadLookupOptions(teamMemberApi, 'name'),
+        ).done(
+            function (
+                projectsResponse,
+                statusesResponse,
+                prioritiesResponse,
+                assigneesResponse,
+            ) {
+                fillSelect(
+                    $filterProject,
+                    normalizeItems(projectsResponse),
+                    'name',
+                );
+                fillSelect(
+                    $filterStatus,
+                    normalizeItems(statusesResponse),
+                    'title',
+                );
+                fillSelect(
+                    $filterPriority,
+                    normalizeItems(prioritiesResponse),
+                    'title',
+                );
+                fillSelect(
+                    $filterAssignee,
+                    normalizeItems(assigneesResponse),
+                    'name',
+                );
+            },
+        );
+    }
 
-        dataTable.clear();
+    function loadLookupOptions(url, sorting) {
+        return abp.ajax({
+            type: 'GET',
+            url: url,
+            data: {
+                skipCount: 0,
+                maxResultCount: 1000,
+                sorting: sorting,
+            },
+        });
+    }
 
-        if (!filtered.length) {
-            dataTable.draw();
-            setState('empty');
-            return;
+    function normalizeItems(response) {
+        return response && response.items ? response.items : [];
+    }
+
+    function fillSelect($select, items, textField) {
+        $select.empty();
+        $select.append($('<option/>', { value: '', text: l('All') }));
+
+        items.forEach(function (item) {
+            $select.append(
+                $('<option/>', {
+                    value: item.id,
+                    text: item[textField] || item.id,
+                }),
+            );
+        });
+    }
+
+    function getSortingExpression(data) {
+        if (!data.order || !data.order.length) {
+            return 'CreationTime desc';
         }
 
-        dataTable.rows.add(filtered).draw();
-        setState('content');
-    }
+        var order = data.order[0];
+        var column = data.columns[order.column] || {};
+        var direction = order.dir === 'desc' ? 'desc' : 'asc';
+        var columnName = column.data || '';
 
-    function applyFilters(items) {
-        var keyword = ($search.val() || '').trim().toLowerCase();
-        var status = $filterStatus.val() || '';
-        var priority = $filterPriority.val() || '';
-        var assignee = $filterAssignee.val() || '';
-        var project = $filterProject.val() || '';
+        if (columnName === 'title') {
+            return 'Title ' + direction;
+        }
 
-        return items.filter(function (task) {
-            if (keyword) {
-                var haystack =
-                    (task.title || '') +
-                    ' ' +
-                    (task.projectName || '') +
-                    ' ' +
-                    (task.statusName || '') +
-                    ' ' +
-                    (task.priorityName || '') +
-                    ' ' +
-                    (task.assigneeName || '');
+        if (columnName === 'startedDate') {
+            return 'StartedTime ' + direction;
+        }
 
-                if (!haystack.toLowerCase().includes(keyword)) {
-                    return false;
-                }
-            }
+        if (columnName === 'endedDate') {
+            return 'EndedTime ' + direction;
+        }
 
-            if (status && (task.statusName || '') !== status) {
-                return false;
-            }
+        if (columnName === 'projectName') {
+            return 'ProjectId ' + direction;
+        }
 
-            if (priority && (task.priorityName || '') !== priority) {
-                return false;
-            }
+        if (columnName === 'statusName') {
+            return 'StatusId ' + direction;
+        }
 
-            if (assignee && (task.assigneeName || '') !== assignee) {
-                return false;
-            }
+        if (columnName === 'priorityName') {
+            return 'PriorityId ' + direction;
+        }
 
-            if (project && (task.projectName || '') !== project) {
-                return false;
-            }
+        if (columnName === 'assigneeName') {
+            return 'AssigneeId ' + direction;
+        }
 
-            return true;
-        });
-    }
-
-    function buildFilterOptions(items) {
-        var statuses = uniqueValues(
-            items.map(function (x) {
-                return x.statusName;
-            }),
-        );
-        var priorities = uniqueValues(
-            items.map(function (x) {
-                return x.priorityName;
-            }),
-        );
-        var assignees = uniqueValues(
-            items.map(function (x) {
-                return x.assigneeName;
-            }),
-        );
-        var projects = uniqueValues(
-            items.map(function (x) {
-                return x.projectName;
-            }),
-        );
-
-        fillSelect($filterStatus, statuses, l('All'));
-        fillSelect($filterPriority, priorities, l('All'));
-        fillSelect($filterAssignee, assignees, l('All'));
-        fillSelect($filterProject, projects, l('All'));
-    }
-
-    function fillSelect($select, values, allLabel) {
-        $select.empty();
-        $select.append($('<option/>', { value: '', text: allLabel || 'All' }));
-        values.forEach(function (value) {
-            $select.append($('<option/>', { value: value, text: value }));
-        });
-    }
-
-    function uniqueValues(values) {
-        return values
-            .map(function (value) {
-                return value || '';
-            })
-            .filter(function (value) {
-                return value !== '';
-            })
-            .filter(function (value, index, array) {
-                return array.indexOf(value) === index;
-            })
-            .sort();
+        return 'CreationTime ' + direction;
     }
 
     function buildBadge(value, type) {

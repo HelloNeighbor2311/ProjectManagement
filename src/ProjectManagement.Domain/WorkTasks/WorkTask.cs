@@ -1,6 +1,5 @@
 ﻿
 using ProjectManagement.Projects;
-using ProjectManagement.WorkTasks.Events;
 using System;
 using System.Collections.Generic;
 using System.Text;

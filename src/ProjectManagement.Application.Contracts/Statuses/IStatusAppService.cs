@@ -12,6 +12,7 @@ namespace ProjectManagement.Statuses
         Task<StatusDto> GetStatusAsync(Guid id);
         Task<PagedResultDto<StatusDto>> GetListStatusAsync(StatusPagedAndSortedResultRequestDto input);
         Task<StatusDto> CreateStatusAsync(CreateStatusDto input);
-        Task DeleteAsync(Guid id);
+        Task UpdateStatusAsync(Guid id, UpdateStatusDto input);
+        Task DeleteStatusAsync(Guid id);
     }
 }

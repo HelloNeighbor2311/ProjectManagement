@@ -19,13 +19,31 @@ namespace ProjectManagement.Statuses
         public async  Task<Status> FindStatusByTitleAsync(string title)
         {
             var dbSet = await GetDbSetAsync();
-            return await dbSet.FirstOrDefaultAsync(t => t.Title == title);
+            return (await dbSet.FirstOrDefaultAsync(t => t.Title == title))!;
         }
 
-        public async Task<List<Status>> GetListStatusAsync(int skipCount, int MaxResultCount, string sorting, string filter = null)
+        public async Task<Status?> GetFirstStatusAsync(Guid? excludedStatusId = null)
         {
             var dbSet = await GetDbSetAsync();
-            return await dbSet.WhereIf(!filter.IsNullOrWhiteSpace(), t => t.Title.Contains(filter))
+
+            var query = dbSet.AsQueryable();
+            if (excludedStatusId.HasValue)
+            {
+                query = query.Where(x => x.Id != excludedStatusId.Value);
+            }
+
+            return await query
+                .OrderBy(x => x.Title)
+                .ThenBy(x => x.Id)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<Status>> GetListStatusAsync(int skipCount, int MaxResultCount, string sorting, string? filter = null)
+        {
+            var dbSet = await GetDbSetAsync();
+            var normalizedFilter = filter ?? string.Empty;
+
+            return await dbSet.WhereIf(!normalizedFilter.IsNullOrWhiteSpace(), t => t.Title.Contains(normalizedFilter))
                 .OrderBy(sorting).Skip(skipCount).Take(MaxResultCount).ToListAsync();
         }
     }

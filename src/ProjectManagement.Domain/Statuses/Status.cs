@@ -22,6 +22,10 @@ namespace ProjectManagement.Statuses
         {
             Color = color;
         }
+        internal void ChangeTitle (string title)
+        {
+            Title = title;
+        }
         private static string RandomHexColor()
         {
             return $"#{Random.Shared.Next(0x1000000):X6}";

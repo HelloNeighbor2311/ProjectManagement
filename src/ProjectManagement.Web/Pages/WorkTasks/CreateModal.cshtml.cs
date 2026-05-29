@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
 
 namespace ProjectManagement.Web.Pages.WorkTasks
 {
@@ -22,29 +21,45 @@ namespace ProjectManagement.Web.Pages.WorkTasks
 
         [BindProperty]
         public CreateWorkTaskDto WorkTask { get; set; } = new();
-        public IWorkTaskAppService workTaskAppService;
-        public IProjectAppService projectAppService;
-        public IPriorityAppService priorityAppService;
-        public IStatusAppService statusAppService;
-        public ITeamMemberAppService teamMemberAppService;
 
-        public CreateModalModel(IWorkTaskAppService _workAppService, IProjectAppService _projectAppService, IPriorityAppService _priorityAppService, IStatusAppService _statusAppService, ITeamMemberAppService _teamMemberAppService)
+        private readonly IWorkTaskAppService _workTaskAppService;
+        private readonly IProjectAppService _projectAppService;
+        private readonly IPriorityAppService _priorityAppService;
+        private readonly IStatusAppService _statusAppService;
+        private readonly ITeamMemberAppService _teamMemberAppService;
+
+        public CreateModalModel(
+            IWorkTaskAppService workTaskAppService,
+            IProjectAppService projectAppService,
+            IPriorityAppService priorityAppService,
+            IStatusAppService statusAppService,
+            ITeamMemberAppService teamMemberAppService)
         {
-            workTaskAppService = _workAppService;
-            projectAppService = _projectAppService;
-            priorityAppService = _priorityAppService;
-            statusAppService = _statusAppService;
-            teamMemberAppService = _teamMemberAppService;
+            _workTaskAppService = workTaskAppService;
+            _projectAppService = projectAppService;
+            _priorityAppService = priorityAppService;
+            _statusAppService = statusAppService;
+            _teamMemberAppService = teamMemberAppService;
         }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(Guid? projectId = null)
         {
             WorkTask.StartedDate = DateTime.UtcNow;
             WorkTask.EndedDate = DateTime.UtcNow.AddDays(1);
+
             Projects = await LoadProjectsAsync();
             Priorities = await LoadPrioritiesAsync();
             Statuses = await LoadStatusesAsync();
             Assignees = await LoadAsigneesAsync();
+
+            if (projectId.HasValue && projectId.Value != Guid.Empty)
+            {
+                WorkTask.ProjectId = projectId.Value;
+            }
+            else if (Projects.Any())
+            {
+                WorkTask.ProjectId = Guid.Parse(Projects.First().Value);
+            }
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -60,63 +75,67 @@ namespace ProjectManagement.Web.Pages.WorkTasks
                 return BadRequest(ModelState);
             }
 
-            // var startedUtc = DateTime.SpecifyKind(WorkTask.StartedDate.Date, DateTimeKind.Utc);
-            // var endedUtc = DateTime.SpecifyKind(WorkTask.EndedDate.Date, DateTimeKind.Utc);
-
             var input = new CreateWorkTaskDto
             {
                 Title = WorkTask.Title,
                 StartedDate = WorkTask.StartedDate,
-                EndedDate = WorkTask.EndedDate ,
+                EndedDate = WorkTask.EndedDate,
                 ProjectId = WorkTask.ProjectId,
                 StatusId = WorkTask.StatusId,
                 PriorityId = WorkTask.PriorityId,
                 AssigneeId = WorkTask.AssigneeId
             };
 
-            await workTaskAppService.CreateWorkTaskAsync(input);
+            await _workTaskAppService.CreateWorkTaskAsync(input);
             return NoContent();
-
         }
-        public async Task<List<SelectListItem>> LoadProjectsAsync()
+
+        private async Task<List<SelectListItem>> LoadProjectsAsync()
         {
-            var results = await projectAppService.GetListAsync(new ProjectPagedAndSortedResultRequestDto
+            var results = await _projectAppService.GetListAsync(new ProjectPagedAndSortedResultRequestDto
             {
                 SkipCount = 0,
                 MaxResultCount = 100,
                 Sorting = "name"
             });
+
             return results.Items.Select(item => new SelectListItem(item.Name, item.Id.ToString())).ToList();
         }
-        public async Task<List<SelectListItem>> LoadPrioritiesAsync()
+
+        private async Task<List<SelectListItem>> LoadPrioritiesAsync()
         {
-            var results = await priorityAppService.GetListAsync(new PriorityPagedAndSortedResultRequestDto
+            var results = await _priorityAppService.GetListAsync(new PriorityPagedAndSortedResultRequestDto
             {
                 SkipCount = 0,
                 MaxResultCount = 100,
                 Sorting = "title"
             });
-            return results.Items.Select(u => new SelectListItem(u.Title, u.Id.ToString())).ToList();
+
+            return results.Items.Select(item => new SelectListItem(item.Title, item.Id.ToString())).ToList();
         }
-        public async Task<List<SelectListItem>> LoadStatusesAsync()
+
+        private async Task<List<SelectListItem>> LoadStatusesAsync()
         {
-            var results = await statusAppService.GetListStatusAsync(new StatusPagedAndSortedResultRequestDto
+            var results = await _statusAppService.GetListStatusAsync(new StatusPagedAndSortedResultRequestDto
             {
                 SkipCount = 0,
                 MaxResultCount = 1000,
                 Sorting = "title"
             });
-            return results.Items.Select(u => new SelectListItem(u.Title, u.Id.ToString())).ToList();
+
+            return results.Items.Select(item => new SelectListItem(item.Title, item.Id.ToString())).ToList();
         }
-        public async Task<List<SelectListItem>> LoadAsigneesAsync()
+
+        private async Task<List<SelectListItem>> LoadAsigneesAsync()
         {
-            var results = await teamMemberAppService.GetListTeamMemberDto(new TeamMemberPagedAndSortedResultRequestDto
+            var results = await _teamMemberAppService.GetListTeamMemberDto(new TeamMemberPagedAndSortedResultRequestDto
             {
                 SkipCount = 0,
                 MaxResultCount = 1000,
                 Sorting = "name"
             });
-            return results.Items.Select(u => new SelectListItem(u.Name, u.Id.ToString())).ToList();
+
+            return results.Items.Select(item => new SelectListItem(item.Name, item.Id.ToString())).ToList();
         }
-    }   
+    }
 }

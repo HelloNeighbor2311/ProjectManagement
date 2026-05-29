@@ -36,5 +36,11 @@ namespace ProjectManagement.WorkTasks
             workTask.ChangePriority(priorityId);
             workTask.AssignTo(assigneeId ?? Guid.Empty);
         }
+
+        public void ChangeWorkTaskStatus(WorkTask workTask, Guid statusId)
+        {
+            Check.NotNull(workTask, nameof(workTask));
+            workTask.ChangeStatus(statusId);
+        }
     }
 }

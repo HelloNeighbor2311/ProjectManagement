@@ -89,6 +89,11 @@ $(function () {
                         updateColorDisplay('#808080');
                         // Close modal
                         modal.modal('hide');
+                        // Tell any listening page which project was created
+                        document.dispatchEvent(
+                            new CustomEvent('projectCreated', { detail: response }),
+                        );
+
                         // Reload the projects table
                         if (window.projectTable) {
                             window.projectTable.ajax.reload();

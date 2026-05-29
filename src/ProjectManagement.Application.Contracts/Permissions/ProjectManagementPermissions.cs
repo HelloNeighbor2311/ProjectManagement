@@ -36,6 +36,7 @@ public static class ProjectManagementPermissions
     {
         public const string Default = GroupName + ".Statuses";
         public const string Create = GroupName + ".Statuses.Create";
+        public const string Edit = GroupName + ".Statuses.Edit";
         public const string Delete = GroupName + ".Statuses.Delete";
     }
     public static class Tasks
