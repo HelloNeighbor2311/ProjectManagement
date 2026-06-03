@@ -15,6 +15,7 @@ namespace ProjectManagement.Configurations
         {
             builder.ToTable(ProjectManagementConsts.DbTablePrefix + "Tasks", ProjectManagementConsts.DbSchema);
             builder.ConfigureByConvention();
+            builder.HasQueryFilter(e=> !e.IsDeleted);
             builder.Property(b => b.Title).IsRequired();
             builder.Property(b => b.ProjectId).IsRequired();
             builder.Property(b => b.StatusId).IsRequired();

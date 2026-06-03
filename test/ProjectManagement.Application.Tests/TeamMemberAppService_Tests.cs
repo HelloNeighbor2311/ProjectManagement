@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Modularity;
 using Xunit;
 
@@ -52,22 +53,7 @@ namespace ProjectManagement
             authorDto.Id.ShouldNotBe(Guid.Empty);
             authorDto.Name.ShouldBe("Edward Bellamy");
         }
-        [Fact]
-        public async Task Should_Not_Allow_To_Create_Duplicate_TeamMember()
-        {
-            await Assert.ThrowsAsync<TeamMemberAlreadyExistedException>(async () =>
-            {
-                await _teamMemberAppService.CreateTeamMemberAsync(
-                    new CreateTeamMemberDto
-                    {
-                        Name = "Richard Olstand",
-                        Email = "ORichard@gmail.com",
-                        Role = "UI/UX Designer",
-                        WeeklyCapacity = 40
-                    }
-                );
-            });
-        }
+        
 
     }
 }

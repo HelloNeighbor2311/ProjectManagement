@@ -8,7 +8,7 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace ProjectManagement.WorkTasks
 {
-    public class WorkTask: AuditedAggregateRoot<Guid>
+    public class WorkTask: FullAuditedAggregateRoot<Guid>
     {
         public string Title { get; private set; } = string.Empty;
         public DateTime StartedTime { get; private set; }

@@ -10,14 +10,12 @@ using ProjectManagement.TeamMembers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq.Dynamic.Core;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Auditing;
-using Volo.Abp.Caching;
 using Volo.Abp.Domain.Repositories;
 
 namespace ProjectManagement.WorkTasks
@@ -85,7 +83,7 @@ namespace ProjectManagement.WorkTasks
             var cacheKey = await BuildWorkTaskListCacheKeyAsync(input);
             var cacheItems = await GetCacheWorkTaskListAsync(cacheKey);
             if (cacheItems != null) return cacheItems;
-            
+
             var query = await _workTaskRepository.GetQueryableAsync();
 
             var filter = input.Filter?.Trim();
@@ -193,8 +191,8 @@ namespace ProjectManagement.WorkTasks
             var assigneeName = string.Empty;
             if (workTask.AssigneeId.HasValue)
             {
-                    assigneeName = await AsyncExecuter.FirstOrDefaultAsync(assigneeQuery.Where(x => x.Id == workTask.AssigneeId.Value))
-                        .ContinueWith(t => t.Result?.Name ?? string.Empty);
+                assigneeName = await AsyncExecuter.FirstOrDefaultAsync(assigneeQuery.Where(x => x.Id == workTask.AssigneeId.Value))
+                    .ContinueWith(t => t.Result?.Name ?? string.Empty);
             }
             var result = _workTaskMapper.ToDetailDtoWithNames(workTask, projectName, statusName, priorityName, assigneeName);
             await SetCacheWorkTaskAsync(cacheKey, result);
