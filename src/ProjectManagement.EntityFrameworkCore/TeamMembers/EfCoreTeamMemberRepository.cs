@@ -21,6 +21,12 @@ namespace ProjectManagement.TeamMembers
             return await dbSet.FirstOrDefaultAsync(t => t.Name == name);
         }
 
+        public async Task<TeamMember> FindTeamMemberByEmailAsync(string email)
+        {
+            var dbSet = await GetDbSetAsync();
+            return await dbSet.FirstOrDefaultAsync(t => t.Email == email);
+        }
+
         public async Task<List<TeamMember>> GetListTeamMemberAsync(int skipCount, int MaxResultCount, string sorting, string filter = null)
         {
             var dbSet = await GetDbSetAsync();

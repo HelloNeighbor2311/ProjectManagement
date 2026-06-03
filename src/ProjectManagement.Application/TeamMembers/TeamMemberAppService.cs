@@ -96,7 +96,10 @@ namespace ProjectManagement.TeamMembers
                 await teamMemberManager.ChangeTeamMemberNameAsync(teamMember, input.Name);
             }
             teamMember.Role = input.Role;
-            teamMember.Email = input.Email;
+            if (teamMember.Email != input.Email)
+            {
+                await teamMemberManager.ChangeTeamMemberEmailAsync(teamMember, input.Email);
+            }
             teamMember.WeeklyCapacity = input.WeeklyCapacity;
             await teamMemberRepository.UpdateAsync(teamMember);
             await InvalidateTeamMemberCachesAsync();

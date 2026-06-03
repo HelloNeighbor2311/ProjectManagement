@@ -28,6 +28,20 @@ namespace ProjectManagement.TeamMembers
             return this;
         }
 
+        internal TeamMember ChangeEmail(string email)
+        {
+            SetEmail(email);
+            return this;
+        }
+
+        private void SetEmail(string email)
+        {
+            Email = Check.NotNullOrWhiteSpace(
+                email,
+                nameof(email)
+            );
+        }
+
         private void SetName(string name)
         {
             Name = Check.NotNullOrWhiteSpace(

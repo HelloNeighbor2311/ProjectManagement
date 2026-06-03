@@ -9,6 +9,7 @@ namespace ProjectManagement.TeamMembers
     public interface ITeamMemberRepository: IRepository<TeamMember, Guid>
     {
         Task<TeamMember> FindTeamMemberByNameAsync(string name);
+        Task<TeamMember> FindTeamMemberByEmailAsync(string email);
         Task<List<TeamMember>> GetListTeamMemberAsync(int skipCount, int MaxResultCount, string sorting, string filter = null);
     }
 }
