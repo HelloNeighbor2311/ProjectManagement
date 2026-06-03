@@ -52,13 +52,17 @@ namespace ProjectManagement.WorkTasks
             }
             Title = newTitle;
         }
-        internal void AssignTo(Guid newAssigneeId)
+        internal void AssignTo(Guid? newAssigneeId)
         {
-            if (AssigneeId == newAssigneeId || newAssigneeId == Guid.Empty)
+            var normalizedAssigneeId = newAssigneeId.HasValue && newAssigneeId.Value != Guid.Empty
+                ? newAssigneeId
+                : null;
+
+            if (AssigneeId == normalizedAssigneeId)
             {
                 return; // No change
             }
-            AssigneeId = newAssigneeId;
+            AssigneeId = normalizedAssigneeId;
         }
 
         internal void ChangeStatus(Guid newStatusId)

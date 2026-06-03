@@ -34,7 +34,7 @@ namespace ProjectManagement.WorkTasks
             workTask.UpdateTimeRange(startedTime, endedTime);
             workTask.ChangeStatus(statusId);
             workTask.ChangePriority(priorityId);
-            workTask.AssignTo(assigneeId ?? Guid.Empty);
+            workTask.AssignTo(assigneeId);
         }
 
         public void ChangeWorkTaskStatus(WorkTask workTask, Guid statusId)

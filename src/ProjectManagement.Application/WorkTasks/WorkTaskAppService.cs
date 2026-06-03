@@ -181,14 +181,14 @@ namespace ProjectManagement.WorkTasks
             var priorityQuery = await _priorityRepository.GetQueryableAsync();
             var assigneeQuery = await _teamMemberRepository.GetQueryableAsync();
 
-                var projectName = await AsyncExecuter.FirstOrDefaultAsync(projectQuery.Where(x => x.Id == workTask.ProjectId))
-                    .ContinueWith(t => t.Result?.Name ?? string.Empty);
+            var projectName = await AsyncExecuter.FirstOrDefaultAsync(projectQuery.Where(x => x.Id == workTask.ProjectId))
+                .ContinueWith(t => t.Result?.Name ?? string.Empty);
 
-                var statusName = await AsyncExecuter.FirstOrDefaultAsync(statusQuery.Where(x => x.Id == workTask.StatusId))
-                    .ContinueWith(t => t.Result?.Title ?? string.Empty);
+            var statusName = await AsyncExecuter.FirstOrDefaultAsync(statusQuery.Where(x => x.Id == workTask.StatusId))
+                .ContinueWith(t => t.Result?.Title ?? string.Empty);
 
-                var priorityName = await AsyncExecuter.FirstOrDefaultAsync(priorityQuery.Where(x => x.Id == workTask.PriorityId))
-                    .ContinueWith(t => t.Result?.Title ?? string.Empty);
+            var priorityName = await AsyncExecuter.FirstOrDefaultAsync(priorityQuery.Where(x => x.Id == workTask.PriorityId))
+                .ContinueWith(t => t.Result?.Title ?? string.Empty);
 
             var assigneeName = string.Empty;
             if (workTask.AssigneeId.HasValue)

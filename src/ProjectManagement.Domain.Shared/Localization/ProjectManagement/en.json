@@ -88,6 +88,7 @@
     "Permission:Tasks.Delete": "Deleting the task",
     "SuccessfullyDeleted": "Deleted object successful",
     "TaskDeleteConfirmationMessage": "Are you sure you want to delete this task ?",
+    "NoTasksFound": "No task found",
 
     "ProjectManagement:00003": "Invalid start time or end time for worktask",
     "ProjectManagement:00004": "There is already a work task with the same title: {title}"
