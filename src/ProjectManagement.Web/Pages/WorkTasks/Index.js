@@ -198,6 +198,10 @@ $(function () {
 
     loadFilterOptions();
 
+    // Force reload data when page loads to avoid showing stale cached data
+    // This ensures background job changes are reflected immediately
+    dataTable.ajax.reload(null, false);
+
     $filterToggle.on('click', function () {
         var isOpen = !$filters.hasClass('d-none');
         $filters.toggleClass('d-none', isOpen);
@@ -253,6 +257,10 @@ $(function () {
         dataTable.ajax.reload();
     });
 
+    // Auto-refresh data every 30 seconds to catch backend changes (e.g., from background jobs)
+    setInterval(function () {
+        dataTable.ajax.reload(null, false);
+    }, 600000); // Reload every 10 minutes
     $('#WorkTaskTable').on('click', '.worktasks-edit-action', function (e) {
         e.preventDefault();
         if (!canEditWorkTask || $(this).hasClass('disabled')) {

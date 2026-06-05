@@ -134,7 +134,15 @@ $(function () {
                 url: statusApi,
                 data: { skipCount: 0, maxResultCount: 1000, sorting: 'title' },
             }),
-            abp.ajax({ type: 'GET', url: taskApi }),
+                abp.ajax({
+                    type: 'GET',
+                    url: taskApi,
+                    data: {
+                        skipCount: 0,
+                        maxResultCount: 1000,
+                        sorting: 'CreationTime desc',
+                    },
+                }),
         )
             .done(function (projectsResponse, statusesResponse, tasksResponse) {
                 state.projects = normalizeArrayResponse(projectsResponse);

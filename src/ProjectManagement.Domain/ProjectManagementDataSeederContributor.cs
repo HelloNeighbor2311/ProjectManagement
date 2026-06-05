@@ -89,14 +89,17 @@ namespace ProjectManagement
                 var todo = new Status(Guid.NewGuid(), "Todo");
                 var inProgress = new Status(Guid.NewGuid(), "On Progress");
                 var done = new Status(Guid.NewGuid(), "Done");
+                var failed = new Status(Guid.NewGuid(), "Failed");
 
                 await _statusRepository.InsertAsync(todo, autoSave: true);
                 await _statusRepository.InsertAsync(inProgress, autoSave: true);
                 await _statusRepository.InsertAsync(done, autoSave: true);
+                await _statusRepository.InsertAsync(failed, autoSave: true);
 
                 statuses["Todo"] = todo.Id;
                 statuses["On Progress"] = inProgress.Id;
                 statuses["Done"] = done.Id;
+                statuses["Failed"] = failed.Id;
             }
             else
             {
@@ -104,6 +107,14 @@ namespace ProjectManagement
                 foreach (var status in allStatuses)
                 {
                     statuses[status.Title] = status.Id;
+                }
+
+                // Ensure "Failed" status exists
+                if (!statuses.ContainsKey("Failed"))
+                {
+                    var failed = new Status(Guid.NewGuid(), "Failed");
+                    await _statusRepository.InsertAsync(failed, autoSave: true);
+                    statuses["Failed"] = failed.Id;
                 }
             }
 

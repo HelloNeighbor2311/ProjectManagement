@@ -11,10 +11,13 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ProjectManagement.Application\ProjectManagement.Application.csproj" />
     <ProjectReference Include="..\ProjectManagement.Domain.Tests\ProjectManagement.Domain.Tests.csproj" />
+    <ProjectReference Include="..\..\src\ProjectManagement.EntityFrameworkCore\ProjectManagement.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" Version="10.3.0" />
     <PackageReference Include="Scriban" Version="7.2.0" />
   </ItemGroup>
 

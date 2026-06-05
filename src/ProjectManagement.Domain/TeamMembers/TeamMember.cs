@@ -8,7 +8,7 @@ namespace ProjectManagement.TeamMembers
 {
     public class TeamMember: AuditedAggregateRoot<Guid>
     {
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; private set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public int WeeklyCapacity { get; set; }

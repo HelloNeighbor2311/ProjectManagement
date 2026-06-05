@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
@@ -7,16 +9,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
 using OpenIddict.Validation.AspNetCore;
+using ProjectManagement.BackgroundJobs;
 using ProjectManagement.EntityFrameworkCore;
 using ProjectManagement.Localization;
 using ProjectManagement.MultiTenancy;
 using ProjectManagement.Permissions;
+using ProjectManagement.Web.Hangfires;
 using ProjectManagement.Web.Menus;
 using System;
 using System.IO;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
-using Volo.Abp.Auditing;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI;
@@ -27,7 +30,10 @@ using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
+using Volo.Abp.BackgroundJobs;
+using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity.Web;
 using Volo.Abp.Localization;
@@ -43,7 +49,6 @@ using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
-using Volo.Abp.Caching.StackExchangeRedis;
 
 namespace ProjectManagement.Web;
 
@@ -137,6 +142,26 @@ public class ProjectManagementWebModule : AbpModule
         });
 
         context.Services.AddMapperlyObjectMapper<ProjectManagementWebModule>();
+
+        context.Services.AddHangfire(config =>
+        {
+            config.UseSqlServerStorage(
+                configuration.GetConnectionString("Default"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.FromSeconds(15),
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }
+            );
+        });
+
+        context.Services.AddHangfireServer(options =>
+        {
+            options.WorkerCount = 1; // number of threads is processing parallelly  
+            options.Queues = new[] { "default" };
+        });
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
@@ -253,6 +278,18 @@ public class ProjectManagementWebModule : AbpModule
 
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
+
+        app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            Authorization = new[] { new HangfireAuthorizationFilter() }
+        });
+
+        var recurringJobManager = context.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+        recurringJobManager.AddOrUpdate(
+            recurringJobId: "weekly-maintenance",
+            job: Hangfire.Common.Job.FromExpression<WeeklyMaintenanceJob>(x => x.ExecuteAsync(new WeeklyMaintenanceJobArgs())),
+            cronExpression: "0 0 2 ? * MON"
+        );
         app.UseConfiguredEndpoints();
     }
 }

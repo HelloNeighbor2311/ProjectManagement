@@ -315,5 +315,12 @@ namespace ProjectManagement.WorkTasks
         {
             await _distributeCache.SetStringAsync(CacheVersionKey, Guid.NewGuid().ToString("N"), CacheOptions);
         }
+        public async Task UpdateWorkTaskStatusAsync(List<WorkTask> overdueWorkTasks)
+        {
+            
+            await _workTaskRepository.UpdateManyAsync(overdueWorkTasks);
+            await InvalidateWorkTaskCacheAsync();
+        }
     }
+    
 }

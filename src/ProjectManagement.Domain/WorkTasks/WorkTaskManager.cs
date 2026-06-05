@@ -12,7 +12,7 @@ namespace ProjectManagement.WorkTasks
         public async Task<WorkTask> CreateWorkTaskAsync(string title, DateTime startedTime, DateTime endedTime, Guid projectId, Guid statusId, Guid priorityId, Guid? assigneeId ) {
             Check.NotNullOrWhiteSpace(title, nameof(title));
             var existedWorkTask = await _workTaskRepository.GetWorkTaskByName(title);
-            if(existedWorkTask != null)
+            if(existedWorkTask != null && existedWorkTask.ProjectId == projectId)
             {
                 throw new WorkTaskAlreadyExistedException(title);
             }

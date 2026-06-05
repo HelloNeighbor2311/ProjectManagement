@@ -151,5 +151,10 @@ namespace ProjectManagement.TeamMembers
         {
             await distributedCache.SetStringAsync(CacheVersionKey, Guid.NewGuid().ToString("N"), CacheOptions);
         }
+        public async Task UpdateTeamMemberCapacityAsync(List<TeamMember> teamMembers)
+        {
+            await teamMemberRepository.UpdateManyAsync(teamMembers);
+            await InvalidateTeamMemberCachesAsync();
+        }
     }
 }
